@@ -57,7 +57,9 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         }
 
         protected void onPostExecute(Void arg0){
-            // Verarbeitung der Antworten
+            //TODO - Verarbeitung der Antworten und Leben abziehen
+            // --> Achtung soll auch beim Click des Buttons aufgerufen werden(Abbruch des Countdowns)
+            //TODO - Call next Question if not dead 
         }
     }
 
@@ -66,7 +68,9 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         new DoSomething().execute();
     }
 
-    public void startQuiz(){}
+    private void nextQuestion(){/** TODO -  load Question from Database
+                                    TODO -  startCountdown**/}
+
 
     /**
      * Method to call if Player looses lifes

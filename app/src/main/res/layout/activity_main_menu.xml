@@ -15,7 +15,8 @@
     <Button
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="New Game"/>
+        android:text="New Game"
+        android:onClick="startGame"/>
 
     <Button
         android:layout_width="150dp"

@@ -46,7 +46,7 @@ public class MainMenuActivity extends FullscreenLayoutActivity {
     startActivity(new Intent(this, CategoryActivity.class));
   }
 
-  public void showHighscore(View view) {
+  public void showHighscores(View view) {
     // TODO
   }
 

@@ -9,7 +9,14 @@
     android:layout_gravity="center"
     tools:context="matsematics.nerdquiz.CategoryActivity">
 
-<!--- Space can not be used here - API 8, another option? -->
+<!--- Layout for a CheckBox
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CATEGORY NAME"
+        android:background="#78FFFFFF"
+        android:layout_marginBottom="3dp"/>
+-->
 
     <TextView
         android:layout_width="match_parent"
@@ -34,37 +41,43 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="The Big Bang Theory"
-                    android:background="#78FFFFFF"/>
+                    android:background="#78FFFFFF"
+                    android:layout_marginBottom="3dp"/>
 
                 <CheckBox
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="How I met your mother"
-                    android:background="#78FFFFFF"/>
+                    android:background="#78FFFFFF"
+                    android:layout_marginBottom="3dp"/>
 
                 <CheckBox
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Star Wars"
-                    android:background="#78FFFFFF"/>
+                    android:background="#78FFFFFF"
+                    android:layout_marginBottom="3dp"/>
 
                 <CheckBox
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Mittelerde"
-                    android:background="#78FFFFFF"/>
+                    android:background="#78FFFFFF"
+                    android:layout_marginBottom="3dp"/>
 
                 <CheckBox
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="IT"
-                    android:background="#78FFFFFF"/>
+                    android:background="#78FFFFFF"
+                    android:layout_marginBottom="3dp"/>
 
                 <CheckBox
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Retro Games"
-                    android:background="#78FFFFFF"/>
+                    android:background="#78FFFFFF"
+                    android:layout_marginBottom="3dp"/>
             </LinearLayout>
         </ScrollView>
     </FrameLayout>

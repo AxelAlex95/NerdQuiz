@@ -4,32 +4,33 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_start">
 
-    <Chronometer
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/chronometer"
-        android:layout_weight="1"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="50dp"
         android:textColor="#FFFFFF"
-        android:layout_gravity="center_horizontal"
-        android:textSize="50dp"/>
+        android:id="@+id/Countdown"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="HIER KÖNNTE IHRE FRAGE STEHEN!!!"
         android:id="@+id/question"
-        android:layout_weight="3"
+        android:layout_weight="4"
         android:background="#9D97f2ff"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_weight="4">
+        android:layout_weight="5">
     <ToggleButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/answer1" />
+        android:id="@+id/answer1"/>
 
     <ToggleButton
         android:layout_width="match_parent"

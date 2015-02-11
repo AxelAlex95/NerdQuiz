@@ -46,5 +46,8 @@ public class MainMenuActivity extends FullscreenLayoutActivity {
       System.exit(0);
   }
 
-  public void startGame(View view){ startActivity(new Intent(this,StartGameActivity.class)); }
+  public void startGame(View view){
+      Intent intent = new Intent(this,StartGameActivity.class);
+      startActivity(intent);
+  }
 }

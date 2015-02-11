@@ -10,11 +10,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 
 import Logging.Logger;
 
@@ -64,6 +67,33 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     }
 
     public void startQuiz(){}
+
+    /**
+     * Method to call if Player looses lifes
+     * @param number of lifes Player lost
+     * @return 0 if Player has lost his last life
+     *         1 else
+     */
+    private int looseLife(int number){
+        ArrayList<ImageView> lifes = new ArrayList<ImageView>();
+        lifes.add((ImageView) findViewById(R.id.life1));
+        lifes.add((ImageView) findViewById(R.id.life2));
+        lifes.add((ImageView) findViewById(R.id.life3));
+        lifes.add((ImageView) findViewById(R.id.life4));
+        lifes.add((ImageView) findViewById(R.id.life5));
+        lifes.add((ImageView) findViewById(R.id.life6));
+        lifes.add((ImageView) findViewById(R.id.life7));
+        int count=0;
+        for(int i=7;i>0;--i){
+            if(count==number)break;
+            if(lifes.get(i).getVisibility()==View.VISIBLE){
+                lifes.get(i).setVisibility(View.INVISIBLE);
+                count++;
+            }
+        }
+        if(count!=number)return 0;
+        else return 1;
+    }
 
 
 }

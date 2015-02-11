@@ -9,6 +9,12 @@
                 android:background="@drawable/bg_start"
                 android:gravity="center"
                 tools:context=".MainMenu">
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:src="@drawable/logo"
+    android:layout_centerHorizontal="true"/>
 
     <LinearLayout
         android:orientation="vertical"
@@ -61,4 +67,5 @@
             android:paddingBottom="10dp"
             android:paddingTop="10dp"/>
     </LinearLayout>
+
 </RelativeLayout>

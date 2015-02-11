@@ -17,10 +17,13 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 public class StartGameActivity extends FullscreenLayoutActivity{
+    int life;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        life=7;
         startAsync();
     }
 
@@ -55,4 +58,8 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     {
         new DoSomething().execute();
     }
+
+    public void startQuiz(){}
+
+
 }

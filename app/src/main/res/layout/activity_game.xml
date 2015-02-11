@@ -20,7 +20,7 @@
         android:text="HIER KÖNNTE IHRE FRAGE STEHEN!!!"
         android:id="@+id/question"
         android:layout_weight="4"
-        android:background="#9D97f2ff"/>
+        android:background="#9Dffffff"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -45,8 +45,68 @@
     <ToggleButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New ToggleButton"
         android:id="@+id/answer4" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Complete"
+        android:id="@+id/buttonComplete" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/life1"
+            android:src="@drawable/life2"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/life2"
+            android:src="@drawable/life2"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/life3"
+            android:src="@drawable/life2"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/life4"
+            android:src="@drawable/life2"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/life5"
+            android:src="@drawable/life2"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/life6"
+            android:src="@drawable/life2"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/life7"
+            android:src="@drawable/life2"/>
     </LinearLayout>
 
 </LinearLayout>

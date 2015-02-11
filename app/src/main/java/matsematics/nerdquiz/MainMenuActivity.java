@@ -38,15 +38,19 @@ public class MainMenuActivity extends FullscreenLayoutActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  public void showCategories(View view) {
-      startActivity(new Intent(this, CategoryActivity.class));
-  }
-
   public void quitGame(View view) {
       System.exit(0);
   }
 
-  public void startGame(View view){
+  public void showCategories(View view) {
+    startActivity(new Intent(this, CategoryActivity.class));
+  }
+
+  public void showHighscore(View view) {
+    // TODO
+  }
+
+  public void startGame(View view) {
       Intent intent = new Intent(this,StartGameActivity.class);
       startActivity(intent);
   }

@@ -9,6 +9,7 @@ import android.view.View;
 
 
 public class CategoryActivity extends FullscreenLayoutActivity {
+    private static final String TAG = "CategoryActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

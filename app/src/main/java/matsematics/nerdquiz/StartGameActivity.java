@@ -16,8 +16,12 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import Logging.Logger;
+
 public class StartGameActivity extends FullscreenLayoutActivity{
     int life;
+    private static final String TAG = "StartGameActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

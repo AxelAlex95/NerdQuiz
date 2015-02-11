@@ -1,13 +1,14 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    android:background="@drawable/bg_start"
-    android:layout_gravity="center"
-    tools:context="matsematics.nerdquiz.CategoryActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:background="@drawable/bg_start"
+                android:layout_gravity="top"
+                tools:context="matsematics.nerdquiz.CategoryActivity">
 
 <!--- Layout for a CheckBox
     <CheckBox
@@ -21,73 +22,95 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select Categories"
+        android:text="@string/select_categories"
         android:textColor="#FFFFFFFF"
-        android:layout_weight="1"/>
+        android:id="@+id/category_textView_selectCategories"/>
 
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="50">
+        android:layout_below="@+id/category_textView_selectCategories">
 
-        <ScrollView android:id="@+id/ScrlView" android:layout_width="fill_parent" android:layout_height="fill_parent">
+        <ScrollView android:id="@+id/ScrlView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:isScrollContainer="true">
 
                 <CheckBox
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="The Big Bang Theory"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    android:paddingLeft="45dp"
+                    android:text="@string/how_i_met_your_mother"
                     android:background="#78FFFFFF"
-                    android:layout_marginBottom="3dp"/>
+                    android:id="@+id/category_checkBox_howIMetYourMother"/>
 
                 <CheckBox
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="How I met your mother"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    android:paddingLeft="45dp"
+                    android:text="@string/it"
                     android:background="#78FFFFFF"
-                    android:layout_marginBottom="3dp"/>
+                    android:id="@+id/category_checkBox_it"/>
 
                 <CheckBox
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Star Wars"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    android:paddingLeft="45dp"
+                    android:text="@string/retro_games"
                     android:background="#78FFFFFF"
-                    android:layout_marginBottom="3dp"/>
+                    android:id="@+id/category_checkBox_retroGames"/>
 
                 <CheckBox
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Mittelerde"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    android:paddingLeft="45dp"
+                    android:text="@string/star_wars"
                     android:background="#78FFFFFF"
-                    android:layout_marginBottom="3dp"/>
+                    android:id="@+id/category_checkBox_starWars"/>
 
                 <CheckBox
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="IT"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    android:paddingLeft="45dp"
+                    android:text="@string/the_big_bang_theory"
                     android:background="#78FFFFFF"
-                    android:layout_marginBottom="3dp"/>
+                    android:id="@+id/category_checkBox_theBigBangTheory"/>
 
                 <CheckBox
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Retro Games"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    android:paddingLeft="45dp"
+                    android:text="@string/tolkiens_legendarium"
                     android:background="#78FFFFFF"
-                    android:layout_marginBottom="3dp"/>
+                    android:id="@+id/category_checkBox_tolkiensLegendarium"/>
+
             </LinearLayout>
         </ScrollView>
     </FrameLayout>
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Start Game"
-        android:id="@+id/buttonStart"
-        android:onClick="startGame"/>
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/start_game"
+    android:id="@+id/category_button_startGame"
+    android:onClick="startGame"
+    android:layout_alignParentBottom="true"/>
 
-</LinearLayout>
+</RelativeLayout>

@@ -23,48 +23,50 @@
         android:layout_height="wrap_content"
         android:layout_weight="50">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+        <ScrollView android:id="@+id/ScrlView" android:layout_width="fill_parent" android:layout_height="fill_parent">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:isScrollContainer="true">
 
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="The Big Bang Theory"
-                android:background="#78FFFFFF"/>
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="The Big Bang Theory"
+                    android:background="#78FFFFFF"/>
 
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="How I met your mother"
-                android:background="#78FFFFFF"/>
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="How I met your mother"
+                    android:background="#78FFFFFF"/>
 
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Star Wars"
-                android:background="#78FFFFFF"/>
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Star Wars"
+                    android:background="#78FFFFFF"/>
 
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Mittelerde"
-                android:background="#78FFFFFF"/>
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Mittelerde"
+                    android:background="#78FFFFFF"/>
 
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="IT"
-                android:background="#78FFFFFF"/>
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="IT"
+                    android:background="#78FFFFFF"/>
 
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Retro Games"
-                android:background="#78FFFFFF"/>
-        </LinearLayout>
-
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Retro Games"
+                    android:background="#78FFFFFF"/>
+            </LinearLayout>
+        </ScrollView>
     </FrameLayout>
 
     <Button

@@ -31,7 +31,8 @@
             android:layout_height="wrap_content"
             android:text="New Game"
             android:background="#FFDDDDDD"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="10dp"
+	    android:onClick="startGame"/>
 
         <Button
             android:layout_width="match_parent"

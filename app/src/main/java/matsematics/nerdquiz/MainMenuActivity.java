@@ -45,4 +45,8 @@ public class MainMenuActivity extends FullscreenLayoutActivity {
   public void quitGame(View view) {
       System.exit(0);
   }
+
+  public void startGame(View view){
+      
+  }
 }

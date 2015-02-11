@@ -1,0 +1,35 @@
+Was kann Megaman in Megaman 1?
+1 Springen
+0 Sliden
+0 Fliegen
+1 Schießen
+
+Welche Farben gibt es in Dr. Mario?
+1 Blau
+0 Grün
+1 Rot
+0 Orange
+
+Welche Farben gibt es in Micro Machines?
+1 Rot
+1 Grün
+1 Blau
+0 Gelb
+
+Wie heißt die Hauptcharaktere in Ninja Gaiden?
+1 Ryu Hayabusa
+0 Simon Belmonte
+1 Jaqiuo
+0 Samus Aran
+
+Wie viele Soundkanäle hatte die NES?
+0 4
+0 8
+0 6
+0 3
+
+Welches dieser Betriebssysteme laufen auf einem Unix-Kernel?
+1 Android
+1 Solaris
+0 DOS
+0 Mac OS X

@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".CategoryActivity"
+            android:label="@string/title_activity_category"
+            android:parentActivityName=".MainMenuActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="matsematics.nerdquiz.MainMenuActivity" />
+        </activity>
     </application>
 
 </manifest>

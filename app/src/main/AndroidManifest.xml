@@ -24,6 +24,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="matsematics.nerdquiz.MainMenuActivity" />
         </activity>
+        <activity android:name=".StartGameActivity"
+                  android:label="StartGameActivity">
+    </activity>
     </application>
 
 </manifest>

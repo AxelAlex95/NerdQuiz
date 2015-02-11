@@ -1,5 +1,6 @@
 package matsematics.nerdquiz;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +19,9 @@ public class FullscreenLayoutActivity extends ActionBarActivity {
             super.onCreate(savedInstanceState);
             hideActionBar();
             setFullscreen();
+
+            // Sets the Application to Potrait and this can not be changed
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         protected void hideActionBar()
         {

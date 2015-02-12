@@ -4,6 +4,8 @@
     <string name="action_settings">Settings</string>
     <string name="app_name">NerdQuiz</string>
     <string name="categories">Categories</string>
+    <string name="complete">Complete</string>
+    <string name="heart">Heart</string>
     <string name="highscores">Highscores</string>
     <string name="how_i_met_your_mother">How I met your mother</string>
     <string name="it">IT</string>

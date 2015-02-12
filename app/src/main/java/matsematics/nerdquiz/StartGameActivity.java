@@ -1,25 +1,12 @@
 package matsematics.nerdquiz;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-
-import Logging.Logger;
 
 public class StartGameActivity extends FullscreenLayoutActivity{
     int life;
@@ -47,12 +34,12 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             return null;
         }
         protected void onPreExecute() {
-            TextView countdown = (TextView)findViewById(R.id.Countdown);
+            TextView countdown = (TextView)findViewById(R.id.game_textView_countdown);
             countdown.setText("10");
         }
 
         protected void onProgressUpdate(Integer... progress) {
-            TextView countdown = (TextView)findViewById(R.id.Countdown);
+            TextView countdown = (TextView)findViewById(R.id.game_textView_countdown);
             countdown.setText(progress[0]+"");
         }
 
@@ -80,23 +67,28 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      */
     private int looseLife(int number){
         ArrayList<ImageView> lifes = new ArrayList<ImageView>();
-        lifes.add((ImageView) findViewById(R.id.life1));
-        lifes.add((ImageView) findViewById(R.id.life2));
-        lifes.add((ImageView) findViewById(R.id.life3));
-        lifes.add((ImageView) findViewById(R.id.life4));
-        lifes.add((ImageView) findViewById(R.id.life5));
-        lifes.add((ImageView) findViewById(R.id.life6));
-        lifes.add((ImageView) findViewById(R.id.life7));
-        int count=0;
-        for(int i=7;i>0;--i){
-            if(count==number)break;
-            if(lifes.get(i).getVisibility()==View.VISIBLE){
+        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart1));
+        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart2));
+        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart3));
+        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart4));
+        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart5));
+        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart6));
+        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart7));
+
+        int count = 0;
+        for (int i = 7; i > 0; --i) {
+            if (count == number)
+              break;
+
+            if (lifes.get(i).getVisibility() == View.VISIBLE) {
                 lifes.get(i).setVisibility(View.INVISIBLE);
-                count++;
+                ++count;
             }
         }
-        if(count!=number)return 0;
-        else return 1;
+        if (count != number)
+          return 0;
+        else
+          return 1;
     }
 
 

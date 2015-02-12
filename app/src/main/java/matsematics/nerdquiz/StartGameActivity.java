@@ -14,15 +14,20 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.Set;
 
 import Logging.Logger;
 
 public class StartGameActivity extends FullscreenLayoutActivity{
     int life;
+    int[] answer;
     private static final String TAG = "StartGameActivity";
 
 
@@ -31,6 +36,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         life=7;
+        answer = new int[4];
         startAsync();
     }
 
@@ -59,7 +65,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         protected void onPostExecute(Void arg0){
             //TODO - Verarbeitung der Antworten und Leben abziehen
             // --> Achtung soll auch beim Click des Buttons aufgerufen werden(Abbruch des Countdowns)
-            //TODO - Call next Question if not dead 
+            //TODO - Call next Question if not dead
         }
     }
 
@@ -68,8 +74,41 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         new DoSomething().execute();
     }
 
-    private void nextQuestion(){/** TODO -  load Question from Database
-                                    TODO -  startCountdown**/}
+    private void nextQuestion(){
+        TextView tv = (TextView) findViewById(R.id.question);
+        String question="";//TODO - load Question from db
+        HashMap<String,Integer> answers = new HashMap<String,Integer>();
+        //TODO - load answers from db
+        //answers.put();
+        //answers.put();
+        //answers.put();
+        //answers.put();
+        tv.setText(question);
+        setAnswersRandom(answers);
+        startAsync();
+    }
+
+    /**
+     * sets answers random to the buttons and adds information to the global answer array
+     * @param answerMap Hashmap of answers and true/false values
+     */
+    private void setAnswersRandom(HashMap<String, Integer> answerMap) {
+        ArrayList<ToggleButton> tbuttons = new ArrayList<ToggleButton>();//
+        tbuttons.add((ToggleButton) findViewById(R.id.answer1));
+        tbuttons.add((ToggleButton) findViewById(R.id.answer2));
+        tbuttons.add((ToggleButton) findViewById(R.id.answer3));
+        tbuttons.add((ToggleButton) findViewById(R.id.answer4));
+        Random r = new Random();
+        Set<String> keys = answerMap.keySet();
+        int count = 4;
+        for(String key:keys){
+            int number = r.nextInt(count)+1;
+            tbuttons.get(number).setText(key);
+            tbuttons.remove(number);
+            answer[number-1]=answerMap.get(key);
+            count--;
+        }
+    }
 
 
     /**

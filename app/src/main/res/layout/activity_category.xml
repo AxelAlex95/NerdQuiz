@@ -38,68 +38,10 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/category_layout"
                 android:isScrollContainer="true">
 
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
-                    android:paddingLeft="45dp"
-                    android:text="@string/how_i_met_your_mother"
-                    android:background="#78FFFFFF"
-                    android:id="@+id/category_checkBox_howIMetYourMother"/>
-
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
-                    android:paddingLeft="45dp"
-                    android:text="@string/it"
-                    android:background="#78FFFFFF"
-                    android:id="@+id/category_checkBox_it"/>
-
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
-                    android:paddingLeft="45dp"
-                    android:text="@string/retro_games"
-                    android:background="#78FFFFFF"
-                    android:id="@+id/category_checkBox_retroGames"/>
-
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
-                    android:paddingLeft="45dp"
-                    android:text="@string/star_wars"
-                    android:background="#78FFFFFF"
-                    android:id="@+id/category_checkBox_starWars"/>
-
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
-                    android:paddingLeft="45dp"
-                    android:text="@string/the_big_bang_theory"
-                    android:background="#78FFFFFF"
-                    android:id="@+id/category_checkBox_theBigBangTheory"/>
-
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
-                    android:paddingLeft="45dp"
-                    android:text="@string/tolkiens_legendarium"
-                    android:background="#78FFFFFF"
-                    android:id="@+id/category_checkBox_tolkiensLegendarium"/>
 
             </LinearLayout>
         </ScrollView>

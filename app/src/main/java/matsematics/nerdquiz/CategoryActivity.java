@@ -13,6 +13,8 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
+import Logging.Logger;
+
 
 public class CategoryActivity extends FullscreenLayoutActivity {
     private static final String TAG = "CategoryActivity";
@@ -20,14 +22,19 @@ public class CategoryActivity extends FullscreenLayoutActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Logger.startLogging();
+        Logger.i(TAG, "onCreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+        getCategories();
         listCategories();
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Logger.i(TAG, "onCreateOptionsMenu");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_category, menu);
         return true;
@@ -35,6 +42,7 @@ public class CategoryActivity extends FullscreenLayoutActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Logger.i(TAG, "onCreate");
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -49,6 +57,7 @@ public class CategoryActivity extends FullscreenLayoutActivity {
     }
 
     public void startGame(View view){
+        Logger.i(TAG, "startGame");
         Intent intent = new Intent(this,StartGameActivity.class);
         startActivity(intent);
     }
@@ -57,8 +66,7 @@ public class CategoryActivity extends FullscreenLayoutActivity {
      * Creates a Checkbox for each category and gives the CheckBox the corresponding ID from the ArrayList
      */
     private void listCategories() {
-        getCategories();
-
+        Logger.i(TAG, "listCategories");
         LinearLayout categories_layout = (LinearLayout)findViewById(R.id.category_layout);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -80,6 +88,7 @@ public class CategoryActivity extends FullscreenLayoutActivity {
      * @return  ArrayList with all Categories
      */
     private void getCategories() {
+        Logger.i(TAG, "getCategories");
         categories = new ArrayList<String>();
 
         categories.add("How I met your mother");

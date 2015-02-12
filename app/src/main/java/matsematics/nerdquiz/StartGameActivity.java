@@ -1,31 +1,23 @@
 package matsematics.nerdquiz;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import org.w3c.dom.Text;
-
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Set;
 
-import Logging.Logger;
 
 public class StartGameActivity extends FullscreenLayoutActivity{
     int life;
@@ -67,7 +59,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         }
 
         protected void onPostExecute(Void arg0){
-            ArrayList<ToggleButton> tbuttons = new ArrayList<ToggleButton>();//
+            ArrayList<ToggleButton> tbuttons = new ArrayList<>();//
             tbuttons.add((ToggleButton) findViewById(R.id.answer1));
             tbuttons.add((ToggleButton) findViewById(R.id.answer2));
             tbuttons.add((ToggleButton) findViewById(R.id.answer3));
@@ -100,8 +92,8 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     private void nextQuestion(){
         TextView tv = (TextView) findViewById(R.id.question);
         String question="";//TODO - load Question from selected categorys from db
-        HashMap<String,Boolean> answers = new HashMap<String,Boolean>();
-        //TODO - save id used Questions in List
+        HashMap<String,Boolean> answers = new HashMap<>();
+        //TODO - save id used Questions in File --> saveData(int id) if(!containsData(id))
         //TODO - load answers from db
         //answers.put();
         //answers.put();
@@ -117,7 +109,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      * @param answerMap Hashmap of answers and true/false values
      */
     private void setAnswersRandom(HashMap<String, Boolean> answerMap) {
-        ArrayList<ToggleButton> tbuttons = new ArrayList<ToggleButton>();//
+        ArrayList<ToggleButton> tbuttons = new ArrayList<>();//
         tbuttons.add((ToggleButton) findViewById(R.id.answer1));
         tbuttons.add((ToggleButton) findViewById(R.id.answer2));
         tbuttons.add((ToggleButton) findViewById(R.id.answer3));
@@ -142,7 +134,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      *         1 else
      */
     private int looseLife(int number){
-        ArrayList<ImageView> lifes = new ArrayList<ImageView>();
+        ArrayList<ImageView> lifes = new ArrayList<>();
         lifes.add((ImageView) findViewById(R.id.life1));
         lifes.add((ImageView) findViewById(R.id.life2));
         lifes.add((ImageView) findViewById(R.id.life3));
@@ -162,5 +154,33 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         else return 1;
     }
 
+    private final String file = "already_answered_Questions";
 
+    private void saveData(int id) {
+        FileOutputStream outputStream;
+        try {
+            outputStream = openFileOutput(file, Context.MODE_PRIVATE);
+            outputStream.write((id+",").getBytes(Charset.forName("UTF-8")));
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private boolean containsData(int id) {
+        FileInputStream inputStream;
+        String s;
+        try {
+            inputStream = openFileInput(file);
+            s = new Scanner(inputStream, "UTF-8").next();
+            inputStream.close();
+            if(s.contains(id+"")) return true;
+            else return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    private void deleteFile(){
+        //-TODO delete File "file"
+    }
 }

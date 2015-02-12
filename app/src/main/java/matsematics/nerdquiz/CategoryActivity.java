@@ -1,20 +1,28 @@
 package matsematics.nerdquiz;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+
+import java.util.ArrayList;
 
 
 public class CategoryActivity extends FullscreenLayoutActivity {
     private static final String TAG = "CategoryActivity";
+    private ArrayList<String> categories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+        listCategories();
     }
 
 
@@ -43,5 +51,43 @@ public class CategoryActivity extends FullscreenLayoutActivity {
     public void startGame(View view){
         Intent intent = new Intent(this,StartGameActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * Creates a Checkbox for each category and gives the CheckBox the corresponding ID from the ArrayList
+     */
+    private void listCategories() {
+        getCategories();
+
+        LinearLayout categories_layout = (LinearLayout)findViewById(R.id.category_layout);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.bottomMargin = 2;
+        params.topMargin = 2;
+
+        for (int i = 0; i < categories.size(); i++) {
+            CheckBox checkBox = new CheckBox(this);
+            checkBox.setId(i);
+            checkBox.setText(categories.get(i));
+            categories_layout.addView(checkBox, params);
+            checkBox.setPadding(45,0,0,0);
+            checkBox.setBackgroundColor(Color.parseColor("#78FFFFFF"));
+        }
+    }
+
+    /**
+     *
+     * @return  ArrayList with all Categories
+     */
+    private void getCategories() {
+        categories = new ArrayList<String>();
+
+        categories.add("How I met your mother");
+        categories.add("IT");
+        categories.add("Retro Games");
+        categories.add("Star Wars");
+        categories.add("Start Game");
+        categories.add("The Big Bang Theory");
+        categories.add("Tolkien\'s Legendarium");
     }
 }

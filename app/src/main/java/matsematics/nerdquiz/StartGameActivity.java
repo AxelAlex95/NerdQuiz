@@ -1,8 +1,10 @@
 package matsematics.nerdquiz;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +29,8 @@ import Logging.Logger;
 
 public class StartGameActivity extends FullscreenLayoutActivity{
     int life;
-    int[] answer;
+    boolean[] answer;
+    int highscore;
     private static final String TAG = "StartGameActivity";
 
 
@@ -35,8 +38,9 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        highscore=0;
         life=7;
-        answer = new int[4];
+        answer = new boolean[4];
         startAsync();
     }
 
@@ -63,9 +67,28 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         }
 
         protected void onPostExecute(Void arg0){
-            //TODO - Verarbeitung der Antworten und Leben abziehen
-            // --> Achtung soll auch beim Click des Buttons aufgerufen werden(Abbruch des Countdowns)
-            //TODO - Call next Question if not dead
+            ArrayList<ToggleButton> tbuttons = new ArrayList<ToggleButton>();//
+            tbuttons.add((ToggleButton) findViewById(R.id.answer1));
+            tbuttons.add((ToggleButton) findViewById(R.id.answer2));
+            tbuttons.add((ToggleButton) findViewById(R.id.answer3));
+            tbuttons.add((ToggleButton) findViewById(R.id.answer4));
+            int wrongAnsweres=0;
+            for(int i=0;i<tbuttons.size();++i){
+                if(tbuttons.get(i).isSelected()!=answer[i]){
+                    wrongAnsweres++;
+                    tbuttons.get(i).setBackgroundColor(Color.parseColor("#E60000"));
+                }else{
+                    tbuttons.get(i).setBackgroundColor(Color.parseColor("#66FF66"));
+                }
+            }
+            int i = looseLife(wrongAnsweres);
+            if(i==0) {//TODO BEENDEN --> Speicher Highscore in Liste und zeige Dialog "Verloren"
+            }
+            else{
+                highscore+=(4-wrongAnsweres);
+                nextQuestion();
+            }
+            // TODO --> Achtung soll auch beim Click des Buttons aufgerufen werden(Abbruch des Countdowns)
         }
     }
 
@@ -76,8 +99,9 @@ public class StartGameActivity extends FullscreenLayoutActivity{
 
     private void nextQuestion(){
         TextView tv = (TextView) findViewById(R.id.question);
-        String question="";//TODO - load Question from db
-        HashMap<String,Integer> answers = new HashMap<String,Integer>();
+        String question="";//TODO - load Question from selected categorys from db
+        HashMap<String,Boolean> answers = new HashMap<String,Boolean>();
+        //TODO - save id used Questions in List
         //TODO - load answers from db
         //answers.put();
         //answers.put();
@@ -92,7 +116,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      * sets answers random to the buttons and adds information to the global answer array
      * @param answerMap Hashmap of answers and true/false values
      */
-    private void setAnswersRandom(HashMap<String, Integer> answerMap) {
+    private void setAnswersRandom(HashMap<String, Boolean> answerMap) {
         ArrayList<ToggleButton> tbuttons = new ArrayList<ToggleButton>();//
         tbuttons.add((ToggleButton) findViewById(R.id.answer1));
         tbuttons.add((ToggleButton) findViewById(R.id.answer2));

@@ -64,9 +64,10 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      */
     @Override
     public void onDestroy() {
-        if (BQTask.getStatus().equals(AsyncTask.Status.RUNNING))
+        Logger.d(TAG, "onDestroy");
+        if (BQTask != null && BQTask.getStatus().equals(AsyncTask.Status.RUNNING))
             BQTask.cancel(true);
-        if (DQTask.getStatus().equals(AsyncTask.Status.RUNNING))
+        if (DQTask != null && DQTask.getStatus().equals(AsyncTask.Status.RUNNING))
             DQTask.cancel(true);
         super.onDestroy();
     }
@@ -161,6 +162,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             e.printStackTrace();
         }
     }
+
     /**
      * checks if categoryID is File
      * @param id
@@ -181,14 +183,6 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             e.printStackTrace();
             return false;
         }
-    }
-    /**
-     * Method to create a toast out of the AsyncTasks which cannot operate the GUI
-     *
-     * @param msg   Message that shall be Toasted
-     */
-    private void toast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -334,10 +328,8 @@ public class StartGameActivity extends FullscreenLayoutActivity{
 
             if (hasLives == 0) {
                 // TODO BEENDEN --> Speicher Highscore in Liste und zeige Dialog "Verloren"
-                toast("Game Over");
             } else {
                 highscore += (4 - this.wrongAnswers);
-                toast("Next Question");
                 startAsyncMain();
             }
             // TODO --> Achtung soll auch beim Click des Buttons aufgerufen werden(Abbruch des Countdowns)

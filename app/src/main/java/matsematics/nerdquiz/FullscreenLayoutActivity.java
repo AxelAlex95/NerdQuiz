@@ -11,6 +11,12 @@ import Logging.Logger;
 public class FullscreenLayoutActivity extends ActionBarActivity {
     private static final String TAG = "FullscreenLayoutActivity";
 
+    /**
+     * Overrides the onCreate Method to set the Activity to FullScreen
+     * as well as hiding the Actionbar and setting the screen orientation to portrait
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,12 +26,19 @@ public class FullscreenLayoutActivity extends ActionBarActivity {
         // Sets the Application to Potrait and this can not be changed
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
+
+    /**
+     * Hides the Actionbar of the Activity
+     */
     protected void hideActionBar()
     {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
     }
 
+    /**
+     * Sets the Activity to Fullscreen
+     */
     protected void setFullscreen()
     {
         WindowManager.LayoutParams attrs = getWindow().getAttributes();

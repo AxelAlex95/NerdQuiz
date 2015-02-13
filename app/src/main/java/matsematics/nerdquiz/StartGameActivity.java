@@ -162,6 +162,11 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             e.printStackTrace();
         }
     }
+    /**
+     * checks if categoryID is File
+     * @param id
+     * @return
+     */
     private boolean containsData(int id) {
         FileInputStream inputStream;
         String s;
@@ -169,17 +174,15 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             inputStream = openFileInput(file);
             s = new Scanner(inputStream, "UTF-8").next();
             inputStream.close();
-            if(s.contains(id+"")) return true;
-            else return false;
+            String[]ids = s.split(",");
+            for(String category:ids){
+                if(category.equals(id+""))return true;
+            }return false;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
-    private void deleteFile(){
-        //-TODO delete File "file"
-    }
-
     /**
      * Method to create a toast out of the AsyncTasks which cannot operate the GUI
      *

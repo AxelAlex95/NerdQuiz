@@ -64,9 +64,10 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      */
     @Override
     public void onDestroy() {
-        if (BQTask.getStatus().equals(AsyncTask.Status.RUNNING))
+        Logger.d(TAG, "onDestroy");
+        if (BQTask != null && BQTask.getStatus().equals(AsyncTask.Status.RUNNING))
             BQTask.cancel(true);
-        if (DQTask.getStatus().equals(AsyncTask.Status.RUNNING))
+        if (DQTask != null && DQTask.getStatus().equals(AsyncTask.Status.RUNNING))
             DQTask.cancel(true);
         super.onDestroy();
     }
@@ -156,12 +157,17 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         FileOutputStream outputStream;
         try {
             outputStream = openFileOutput(file, Context.MODE_PRIVATE);
-            outputStream.write((id+",").getBytes(Charset.forName("UTF-8")));
-            outputStream.close();
+            FileUtils.writeString(outputStream,id+"");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * checks if categoryID is File
+     * @param id
+     * @return
+     */
     private boolean containsData(int id) {
         FileInputStream inputStream;
         String s;
@@ -169,24 +175,14 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             inputStream = openFileInput(file);
             s = new Scanner(inputStream, "UTF-8").next();
             inputStream.close();
-            if(s.contains(id+"")) return true;
-            else return false;
+            String[]ids = s.split(",");
+            for(String category:ids){
+                if(category.equals(id+""))return true;
+            }return false;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-    }
-    private void deleteFile(){
-        //-TODO delete File "file"
-    }
-
-    /**
-     * Method to create a toast out of the AsyncTasks which cannot operate the GUI
-     *
-     * @param msg   Message that shall be Toasted
-     */
-    private void toast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -332,10 +328,8 @@ public class StartGameActivity extends FullscreenLayoutActivity{
 
             if (hasLives == 0) {
                 // TODO BEENDEN --> Speicher Highscore in Liste und zeige Dialog "Verloren"
-                toast("Game Over");
             } else {
                 highscore += (4 - this.wrongAnswers);
-                toast("Next Question");
                 startAsyncMain();
             }
             // TODO --> Achtung soll auch beim Click des Buttons aufgerufen werden(Abbruch des Countdowns)

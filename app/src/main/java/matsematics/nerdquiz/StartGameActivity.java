@@ -1,6 +1,7 @@
 package matsematics.nerdquiz;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.text.format.Time;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.io.FileInputStream;
@@ -21,108 +23,62 @@ import java.util.Set;
 
 import Logging.Logger;
 
+/**
+ * The Game class, it handles the progress of a single Game
+ * Reads and writes Questions into the GameScreen
+ * Processes the user input etc.
+ */
 public class StartGameActivity extends FullscreenLayoutActivity{
-    int life;
-    boolean[] answer;
-    int highscore;
-    private static final String TAG = "StartGameActivity";
+    private static final String     TAG = "StartGameActivity";
+    int                             life;
+    boolean[]                       answer;
+    int                             highscore;
+    ArrayList<ToggleButton>         tButtons;
 
+    // ASyncTasks are saved so they can be canceled in onDestroy()
+    AsyncTask                       DQTask;
+    AsyncTask                       BQTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Logger.setLogging(true);
+        Logger.startLogging();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        highscore=0;
-        life=7;
-        answer = new boolean[4];
-        startAsync();
+
+        this.highscore = 0;
+        this.life = 7;
+        this.answer = new boolean[4];
+
+        this.tButtons = new ArrayList<ToggleButton>();
+        this.tButtons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer1));
+        this.tButtons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer2));
+        this.tButtons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer3));
+        this.tButtons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer4));
+
+        startAsyncMain();
     }
 
-    private class DoSomething extends AsyncTask<Void, Integer, Void> {
-        private Time time = new Time();
-
-        protected Void doInBackground(Void... arg0) {
-            for (int i=10; i>=0; --i) {
-                try {
-                    publishProgress(i);
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-        protected void onPreExecute() {
-            Logger.i(TAG, "onPreExecute");
-            TextView countdown = (TextView)findViewById(R.id.game_textView_countdown);
-            countdown.setText("10");
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-            TextView countdown = (TextView)findViewById(R.id.game_textView_countdown);
-            countdown.setText(progress[0]+"");
-        }
-
-
-        protected void onPostExecute(Void arg0) {
-            time.setToNow();
-            Logger.i(TAG, "onPostExecute");
-            ArrayList<ToggleButton> tbuttons = new ArrayList<ToggleButton>();
-            tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer1));
-            tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer2));
-            tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer3));
-            tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer4));
-
-            int wrongAnswers = 0;
-            for (int i = 0; i < tbuttons.size(); ++i) {
-                if (tbuttons.get(i).isChecked()!=answer[i]) {
-                    wrongAnswers++;
-                    tbuttons.get(i).setBackgroundColor(Color.parseColor("#FFE60000"));
-                    Logger.i(TAG, "Background Red");
-                } else {
-                    tbuttons.get(i).setBackgroundColor(Color.parseColor("#FF66FF66"));
-                    Logger.i(TAG, "Background Green");
-                }
-            }
-
-            try{
-                time.setToNow();
-                Logger.i(TAG, "THREAD SLEEP " + time.minute + ":" + time.second);
-                Thread.currentThread().sleep(1000);
-            }
-            catch(InterruptedException e){e.getStackTrace();}
-
-            time.setToNow();
-            Logger.i(TAG, "THREAD ACTIVE " + time.minute + ":" + time.second);
-
-            int i = looseLife(wrongAnswers);
-            if (i == 0) {
-              //TODO BEENDEN --> Speicher Highscore in Liste und zeige Dialog "Verloren"
-            } else {
-                highscore += (4 - wrongAnswers);
-                nextQuestion();
-            }
-            // TODO --> Achtung soll auch beim Click des Buttons aufgerufen werden(Abbruch des Countdowns)
-        }
+    /**
+     * Overrides the onDestroy() Method to cancel all still active Tasks, so it wont continue
+     * running in the Background
+     */
+    @Override
+    public void onDestroy() {
+        if (BQTask.getStatus().equals(AsyncTask.Status.RUNNING))
+            BQTask.cancel(true);
+        if (DQTask.getStatus().equals(AsyncTask.Status.RUNNING))
+            DQTask.cancel(true);
+        super.onDestroy();
     }
 
-    public void startAsync()
-    {
-        Logger.i(TAG, "startAsync");
-        new DoSomething().execute();
-    }
-
+    /**
+     * Resets the Background Color of all Buttons back to default
+     * Initializes the new Question and its answers for the next round
+     */
     private void nextQuestion() {
-        try{
-        Thread.sleep(1000);
-    }catch(InterruptedException e)
-
-    {
-    }
-        Logger.i(TAG, "nextQuestion " + Thread.activeCount());
+        Logger.i(TAG, "nextQuestion ");
         TextView tv = (TextView) findViewById(R.id.game_textView_question);
-        String question="";//TODO - load Question from selected categorys from db
+        String question="Test";//TODO - load Question from selected categorys from db
         HashMap<String,Boolean> answers = new HashMap<>();
         //TODO - save id used Questions in File --> saveData(int id) if(!containsData(id))
         //TODO - load answers from db
@@ -131,17 +87,13 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         //answers.put();
         //answers.put();
         tv.setText(question);
-        ArrayList<ToggleButton> tbuttons = new ArrayList<ToggleButton>();
-        tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer1));
-        tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer2));
-        tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer3));
-        tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer4));
 
-        for(ToggleButton tb:tbuttons){
+        for(ToggleButton tb : tButtons){
             tb.setBackgroundColor(Color.parseColor("#78FFFFFF"));
+            tb.setChecked(false);
         }
+
         setAnswersRandom(answers);
-        startBGAsync();
     }
 
     /**
@@ -150,29 +102,25 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      */
     private void setAnswersRandom(HashMap<String, Boolean> answerMap) {
         Logger.i(TAG, "setAnswersRandom");
-        ArrayList<ToggleButton> tbuttons = new ArrayList<ToggleButton>();//
-        tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer1));
-        tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer2));
-        tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer3));
-        tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer4));
+        ArrayList<ToggleButton> tempButtons = (ArrayList<ToggleButton>) tButtons.clone();//
+
         Random r = new Random();
         Set<String> keys = answerMap.keySet();
         int count = 4;
         for (String key:keys) {
             int number = r.nextInt(count) + 1;
-            tbuttons.get(number).setText(key);
-            tbuttons.remove(number);
+            tempButtons.get(number).setText(key);
+            tempButtons.remove(number);
             answer[number - 1] = answerMap.get(key);
             --count;
         }
     }
 
-
     /**
      * Method to call if Player looses lifes
-     * @param number of lifes Player lost
-     * @return 0 if Player has lost his last life
-     *         1 else
+     * @param   number of lifes Player lost
+     * @return  0 if Player has lost his last life
+     *          1 else
      */
     private int looseLife(int number){
         Logger.i(TAG, "looseLife");
@@ -232,12 +180,50 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         //-TODO delete File "file"
     }
 
-    private class BetweenQuestions extends AsyncTask<Void, Integer, Void> {
-        private String TAG = "BetweenQuestions";
-        private Time time = new Time();
+    /**
+     * Method to create a toast out of the AsyncTasks which cannot operate the GUI
+     *
+     * @param msg   Message that shall be Toasted
+     */
+    private void toast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
 
+    /**
+     * Starts the AsyncTask that runs while a Question is being answered by the user
+     */
+    public void startAsyncMain()
+    {
+        Logger.i(TAG, "startAsyncMain");
+        DQTask = new DuringQuestions().execute();
+    }
+
+    /**
+     * Starts the AsyncTask that processes the result of the user input for a question
+     */
+    public void startAsyncBackground()
+    {
+        Logger.i(TAG, "startAsyncBackground");
+        BQTask = new BetweenQuestions().execute();
+    }
+
+    /************************************************************************************
+     *  AsyncTask DuringQuestions                                                       *
+     ***********************************************************************************/
+    /**
+     * AsyncTask for the Duration of a Question
+     * Counts down a timer in a background Thread
+     */
+    private class DuringQuestions extends AsyncTask<Void, Integer, Void> {
+        private static final String TAG     = "DuringQuestions";
+        private TextView            countdown;
+
+        /**
+         * Background Thread that counts down the Timer every 1 Second
+         */
         protected Void doInBackground(Void... arg0) {
-            for (int i=10; i>=0; --i) {
+            Logger.i(TAG, "doInBackground");
+            for (int i = 10; i >= 0; --i) {
                 try {
                     publishProgress(i);
                     Thread.sleep(1000);
@@ -247,60 +233,113 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             }
             return null;
         }
+
+        /**
+         * This method is executed before the Background Thread is started
+         */
         protected void onPreExecute() {
             Logger.i(TAG, "onPreExecute");
+            this.countdown = (TextView) findViewById(R.id.game_textView_countdown);
+            this.countdown.setText("10");
+
+            nextQuestion();
         }
 
+        /**
+         * Method that is called from the background Thread and updates the Counter Element
+         *
+         * @param progress  Time remaining to answer the current question
+         */
         protected void onProgressUpdate(Integer... progress) {
+            Logger.i(TAG, "onProgressUpdate");
+            this.countdown.setText(progress[0] + "");
         }
 
-
+        /**
+         * Method that is started after the background Thread has been initialized
+         */
         protected void onPostExecute(Void arg0) {
-            time.setToNow();
             Logger.i(TAG, "onPostExecute");
-            ArrayList<ToggleButton> tbuttons = new ArrayList<ToggleButton>();
-            tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer1));
-            tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer2));
-            tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer3));
-            tbuttons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer4));
-
-            int wrongAnswers = 0;
-            for (int i = 0; i < tbuttons.size(); ++i) {
-                if (tbuttons.get(i).isChecked()!=answer[i]) {
-                    wrongAnswers++;
-                    tbuttons.get(i).setBackgroundColor(Color.parseColor("#FFE60000"));
-                    Logger.i(TAG, "Background Red");
-                } else {
-                    tbuttons.get(i).setBackgroundColor(Color.parseColor("#FF66FF66"));
-                    Logger.i(TAG, "Background Green");
-                }
-            }
-
-            try{
-                time.setToNow();
-                Logger.i(TAG, "THREAD SLEEP " + time.minute + ":" + time.second);
-                Thread.currentThread().sleep(1000);
-            }
-            catch(InterruptedException e){e.getStackTrace();}
-
-            time.setToNow();
-            Logger.i(TAG, "THREAD ACTIVE " + time.minute + ":" + time.second);
-
-            int i = looseLife(wrongAnswers);
-            if (i == 0) {
-                //TODO BEENDEN --> Speicher Highscore in Liste und zeige Dialog "Verloren"
-            } else {
-                highscore += (4 - wrongAnswers);
-                nextQuestion();
-            }
-            // TODO --> Achtung soll auch beim Click des Buttons aufgerufen werden(Abbruch des Countdowns)
+            startAsyncBackground();
         }
     }
 
-    public void startBGAsync()
-    {
-        Logger.i(TAG, "startAsync");
-        new BetweenQuestions().execute();
+    /************************************************************************************
+     *  AsyncTask BetweenQuestions                                                      *
+     ***********************************************************************************/
+    /**
+     * AsyncTask that processes the given answers
+     * Changes the color of the buttons based on the user input
+     */
+    private class BetweenQuestions extends AsyncTask<Void, Integer, Void> {
+        private static final String TAG     = "BetweenQuestions";
+        private int                 wrongAnswers;
+        private int                 hasLives;
+
+        /**
+         * Does nothing for a set time frame
+         */
+        protected Void doInBackground(Void... arg0) {
+            Logger.i(TAG, "doInBackground");
+            //for (int i = 30; i >= 0; --i) {
+            try {
+                onProgressUpdate(1);
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //}
+
+            return null;
+        }
+
+        /**
+         * Method is called before the new Thread is initialized
+         * The Button colors are changed based on the user input
+         */
+        protected void onPreExecute() {
+            Logger.i(TAG, "onPreExecute");
+
+            this.wrongAnswers = 0;
+
+            for (int i = 0; i < tButtons.size(); ++i) {
+                if (tButtons.get(i).isChecked() != answer[i]) {
+                    wrongAnswers++;
+                    tButtons.get(i).setBackgroundColor(Color.parseColor("#FFE60000"));
+                } else {
+                    tButtons.get(i).setBackgroundColor(Color.parseColor("#FF66FF66"));
+                }
+            }
+
+            this.hasLives = looseLife(this.wrongAnswers);
+        }
+
+        /**
+         * Does nothing in this context
+         *
+         * @param progress
+         */
+        protected void onProgressUpdate(Integer... progress) {
+            Logger.i(TAG, "onProgressUpdate ");
+        }
+
+        /**
+         * Button Colors are reset to Default
+         * Next AsyncMain() will be initiated if lifes are remaining
+         */
+        protected void onPostExecute(Void arg0) {
+            Logger.i(TAG, "onPostExecute");
+
+            if (hasLives == 0) {
+                // TODO BEENDEN --> Speicher Highscore in Liste und zeige Dialog "Verloren"
+                toast("Game Over");
+            } else {
+                highscore += (4 - this.wrongAnswers);
+                toast("Next Question");
+                startAsyncMain();
+            }
+            // TODO --> Achtung soll auch beim Click des Buttons aufgerufen werden(Abbruch des Countdowns)
+        }
     }
  }
 

@@ -156,8 +156,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         FileOutputStream outputStream;
         try {
             outputStream = openFileOutput(file, Context.MODE_PRIVATE);
-            outputStream.write((id+",").getBytes(Charset.forName("UTF-8")));
-            outputStream.close();
+            FileUtils.writeString(outputStream,id+"");
         } catch (Exception e) {
             e.printStackTrace();
         }

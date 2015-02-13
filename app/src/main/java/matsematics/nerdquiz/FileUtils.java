@@ -3,6 +3,7 @@ package matsematics.nerdquiz;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 /**
  * FileUtils can read and write Strings and Ints into a given Stream
@@ -75,6 +76,21 @@ public class FileUtils {
   }
 
   /**
+   * readStringArray reads the InputStream completely
+   * and returns the information in an array
+   * @param is InputStream to read from
+   * @return Array with Strings from InputStream
+   */
+  public static String[] readStringArray(InputStream is) {
+    ArrayList<String> list = new ArrayList<>();
+    String str;
+    while ((str = readString(is)) != null)
+      list.add(str);
+
+    return (String[]) list.toArray();
+  }
+
+  /**
    * writeString writes a given String to a given OutputStream;
    * the length (int32) of the String will be placed in front of the String
    * @param os OutputStream to write to
@@ -91,6 +107,21 @@ public class FileUtils {
     } catch (IOException e) {
       e.printStackTrace();
       return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * writeStringArray writes a given Array of Strings to a given OutputStream
+   * @param os OutputStream to write to
+   * @param arr Array of Strings to write
+   * @return true, if Array could be completely written into OutputStream
+   */
+  public static boolean writeString(OutputStream os, String[] arr) {
+    for (String str : arr) {
+      if (!writeString(os, str))
+        return false;
     }
 
     return true;

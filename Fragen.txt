@@ -34,3 +34,20 @@ Wie heißen die Feen, die Link begleiten?
 1 Tetl
 0 Tael
 
+Was gab es vor 1960?
+1 Das erste Mobiltelefon
+0 Die erste Diskette
+1 Das erste Computerspiel
+1 Den ersten Compiler
+
+Welche Farben haben die PacMan-Geister?
+1 Blau
+0 Grün
+1 Rot
+1 Pink
+
+Wie viele Reihen passen in ein Tetris-Feld?
+1 20
+0 15
+0 18
+0 22

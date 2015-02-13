@@ -1,5 +1,8 @@
 package matsematics.nerdquiz;
 
+import android.util.Log;
+
+import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -95,4 +98,14 @@ public class FileUtils {
 
     return true;
   }
+
+    public static boolean deleteFile(File f){
+       try{
+           deleteFile(f);
+           return true;
+       }catch(Exception e){
+           Log.i("deleteFile",e.getMessage());
+           return false;
+       }
+    }
 }

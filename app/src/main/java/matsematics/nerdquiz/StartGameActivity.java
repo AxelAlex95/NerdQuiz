@@ -1,11 +1,8 @@
 package matsematics.nerdquiz;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.format.Time;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,7 +11,6 @@ import android.widget.ToggleButton;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -34,10 +30,14 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     boolean[]                       answer;
     int                             highscore;
     ArrayList<ToggleButton>         tButtons;
+    ArrayList<ImageView>            lives;
 
     // ASyncTasks are saved so they can be canceled in onDestroy()
     AsyncTask                       DQTask;
     AsyncTask                       BQTask;
+
+    // Saving the Thread reference to let it sleep while BetweenQuestions is running
+    Thread                          GUI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,17 +45,64 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        this.GUI = Thread.currentThread();
+        this.BQTask = null;
+        this.DQTask = null;
+
         this.highscore = 0;
         this.life = 7;
         this.answer = new boolean[4];
 
+        initAnswerButtons();
+        initLife();
+
+        startAsyncMain();
+    }
+
+    /**
+     * Initializes the life bar
+     */
+    private void initLife() {
+        this.lives = new ArrayList<ImageView>();
+
+        lives.add((ImageView) findViewById(R.id.game_lifeBar_heart1));
+        lives.add((ImageView) findViewById(R.id.game_lifeBar_heart2));
+        lives.add((ImageView) findViewById(R.id.game_lifeBar_heart3));
+        lives.add((ImageView) findViewById(R.id.game_lifeBar_heart4));
+        lives.add((ImageView) findViewById(R.id.game_lifeBar_heart5));
+        lives.add((ImageView) findViewById(R.id.game_lifeBar_heart6));
+        lives.add((ImageView) findViewById(R.id.game_lifeBar_heart7));
+    }
+
+    /*+
+    Initializes the AnswerButtons
+     */
+    private void initAnswerButtons() {
         this.tButtons = new ArrayList<ToggleButton>();
+
         this.tButtons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer1));
         this.tButtons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer2));
         this.tButtons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer3));
         this.tButtons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer4));
+    }
 
-        startAsyncMain();
+    /**
+     * Provides the functionality for the answer buttons to change the color depending on their checked state
+     *
+     * @param view  Button that was clicked
+     */
+    public void toggled(View view) {
+
+        Logger.i(TAG, "toggled");
+        if (BQTask == null || !BQTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
+            ToggleButton temp = (ToggleButton) view;
+            if (temp.isChecked()) {
+                temp.setBackgroundResource(R.drawable.yellow);
+            }
+            else {
+                temp.setBackgroundResource(R.drawable.blue);
+            }
+        }
     }
 
     /**
@@ -65,10 +112,12 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     @Override
     public void onDestroy() {
         Logger.d(TAG, "onDestroy");
+
         if (BQTask != null && BQTask.getStatus().equals(AsyncTask.Status.RUNNING))
             BQTask.cancel(true);
         if (DQTask != null && DQTask.getStatus().equals(AsyncTask.Status.RUNNING))
             DQTask.cancel(true);
+
         super.onDestroy();
     }
 
@@ -79,18 +128,35 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     private void nextQuestion() {
         Logger.i(TAG, "nextQuestion ");
         TextView tv = (TextView) findViewById(R.id.game_textView_question);
-        String question="Test";//TODO - load Question from selected categorys from db
+        String question = "Test";//TODO - load Question from selected categorys from db
         HashMap<String,Boolean> answers = new HashMap<>();
+
+
         //TODO - save id used Questions in File --> saveData(int id) if(!containsData(id))
         //TODO - load answers from db
-        //answers.put();
-        //answers.put();
-        //answers.put();
-        //answers.put();
+        String[] tmp = new String[4];
+
+        tmp[0] = "Answer A";
+        tmp[1] = "Answer B";
+        tmp[2] = "Answer C";
+        tmp[3] = "Answer D";
+
+        answer[0] = false;
+        answer[1] = true;
+        answer[2] = false;
+        answer[3] = false;
+
+        answers.put(tmp[0], answer[0]);
+        answers.put(tmp[1], answer[1]);
+        answers.put(tmp[2], answer[2]);
+        answers.put(tmp[3], answer[3]);
+
         tv.setText(question);
 
+        int curAnswer = 0;
+
         for(ToggleButton tb : tButtons){
-            tb.setBackgroundColor(Color.parseColor("#78FFFFFF"));
+            tb.setBackgroundResource(R.drawable.blue);
             tb.setChecked(false);
         }
 
@@ -98,57 +164,64 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     }
 
     /**
+     * TODO Fix this Method
+     * TODO Always writes the order D C A B
+     * TODO Does not write the true/false flag at the right spot into answers because
+     * TODO Insert point for the last insertion into answers[] is always at 0
+     *
      * sets answers random to the buttons and adds information to the global answer array
      * @param answerMap Hashmap of answers and true/false values
      */
     private void setAnswersRandom(HashMap<String, Boolean> answerMap) {
         Logger.i(TAG, "setAnswersRandom");
-        ArrayList<ToggleButton> tempButtons = (ArrayList<ToggleButton>) tButtons.clone();//
+        ArrayList<ToggleButton> tempButtons = (ArrayList<ToggleButton>) tButtons.clone();
 
         Random r = new Random();
         Set<String> keys = answerMap.keySet();
         int count = 4;
-        for (String key:keys) {
-            int number = r.nextInt(count) + 1;
+
+        for (String key : keys) {
+            int number = r.nextInt(count);
+
             tempButtons.get(number).setText(key);
+            tempButtons.get(number).setTextOn(key);
+            tempButtons.get(number).setTextOff(key);
+
             tempButtons.remove(number);
-            answer[number - 1] = answerMap.get(key);
+
+            Logger.i(TAG, "Number: " + number);
+            answer[number] = answerMap.get(key);
             --count;
         }
     }
 
     /**
-     * Method to call if Player looses lifes
-     * @param   number of lifes Player lost
+     * Method to call if Player looses lives
+     * @param   number of lives Player lost
      * @return  0 if Player has lost his last life
      *          1 else
      */
-    private int looseLife(int number){
+    private void looseLife(int number){
         Logger.i(TAG, "looseLife");
-        ArrayList<ImageView> lifes = new ArrayList<ImageView>();
-        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart1));
-        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart2));
-        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart3));
-        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart4));
-        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart5));
-        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart6));
-        lifes.add((ImageView) findViewById(R.id.game_lifeBar_heart7));
 
         int count = 0;
         for (int i = 6; i >= 0; --i) {
             if (count == number)
-              break;
-
-            if (lifes.get(i).getVisibility() == View.VISIBLE) {
-
-                lifes.get(i).setVisibility(View.INVISIBLE);
+                break;
+            if (lives.get(i).getVisibility() == View.VISIBLE) {
+                lives.get(i).setVisibility(View.INVISIBLE);
+                --life;
                 ++count;
             }
         }
-        if (count != number)
-          return 0;
+        /*if (count != number)
+            return 0;
         else
-          return 1;
+            return 1;*/
+    }
+
+    private boolean hasLives() {
+        return this.life > 0;
     }
 
     private final String file = "already_answered_Questions";
@@ -183,6 +256,17 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Skips the remaining timer and starts the BetweenQuestions Task
+     *
+     * @param view  Confirm button
+     */
+    public void onConfirm(View view) {
+        Logger.i(TAG, "onConfirm");
+
+        Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -235,9 +319,9 @@ public class StartGameActivity extends FullscreenLayoutActivity{
          */
         protected void onPreExecute() {
             Logger.i(TAG, "onPreExecute");
+
             this.countdown = (TextView) findViewById(R.id.game_textView_countdown);
             this.countdown.setText("10");
-
             nextQuestion();
         }
 
@@ -269,8 +353,6 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      */
     private class BetweenQuestions extends AsyncTask<Void, Integer, Void> {
         private static final String TAG     = "BetweenQuestions";
-        private int                 wrongAnswers;
-        private int                 hasLives;
 
         /**
          * Does nothing for a set time frame
@@ -281,6 +363,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             try {
                 onProgressUpdate(1);
                 Thread.sleep(3000);
+                GUI.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -296,18 +379,19 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         protected void onPreExecute() {
             Logger.i(TAG, "onPreExecute");
 
-            this.wrongAnswers = 0;
+            int wrongAnswers = 0;
 
             for (int i = 0; i < tButtons.size(); ++i) {
                 if (tButtons.get(i).isChecked() != answer[i]) {
                     wrongAnswers++;
-                    tButtons.get(i).setBackgroundColor(Color.parseColor("#FFE60000"));
+                    tButtons.get(i).setBackgroundResource(R.drawable.red);
                 } else {
-                    tButtons.get(i).setBackgroundColor(Color.parseColor("#FF66FF66"));
+                    tButtons.get(i).setBackgroundResource(R.drawable.dark_green);
                 }
             }
 
-            this.hasLives = looseLife(this.wrongAnswers);
+            highscore += (4 - wrongAnswers);
+            looseLife(wrongAnswers);
         }
 
         /**
@@ -320,21 +404,18 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         }
 
         /**
-         * Button Colors are reset to Default
-         * Next AsyncMain() will be initiated if lifes are remaining
+         * Next AsyncMain() will be initiated if lives are remaining
          */
         protected void onPostExecute(Void arg0) {
             Logger.i(TAG, "onPostExecute");
 
-            if (hasLives == 0) {
+            if (!hasLives()) {
                 // TODO BEENDEN --> Speicher Highscore in Liste und zeige Dialog "Verloren"
+                Logger.i(TAG, "Score: " + highscore);
             } else {
-                highscore += (4 - this.wrongAnswers);
                 startAsyncMain();
-            }
-            // TODO --> Achtung soll auch beim Click des Buttons aufgerufen werden(Abbruch des Countdowns)
+                BQTask.cancel(true);
+            };
         }
     }
- }
-
-
+}

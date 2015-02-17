@@ -80,6 +80,7 @@ public class CategoryActivity extends FullscreenLayoutActivity {
             categories_layout.addView(checkBox, params);
             checkBox.setPadding(45,0,0,0);
             checkBox.setBackgroundColor(Color.parseColor("#78FFFFFF"));
+            checkBox.setChecked(true);
         }
     }
 

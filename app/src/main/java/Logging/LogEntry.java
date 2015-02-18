@@ -15,7 +15,9 @@ public class LogEntry {
         Time time = new Time();
         time.setToNow();
 
-        this.logMsg =  time.year + "." + (time.month + 1) + "." + time.monthDay + "\t" + cat + "/" + tag + ": " + msg;
+        this.logMsg = String.format("%02d-%02d %02d:%02d:%02d \t %s/%s/%s",
+                time.month, time.monthDay, time.hour, time.minute, time.second,
+                cat, tag, msg);
     }
 
     @Override

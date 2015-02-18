@@ -27,7 +27,7 @@ import Logging.Logger;
 public class StartGameActivity extends FullscreenLayoutActivity{
     private static final String     TAG = "StartGameActivity";
     int                             life;
-    boolean[]                       answer;
+    HashMap<String, Boolean> answers;
     int                             highscore;
     ArrayList<ToggleButton>         tButtons;
     ArrayList<ImageView>            lives;
@@ -51,7 +51,6 @@ public class StartGameActivity extends FullscreenLayoutActivity{
 
         this.highscore = 0;
         this.life = 7;
-        this.answer = new boolean[4];
 
         initAnswerButtons();
         initLife();
@@ -106,13 +105,12 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     }
 
     /**
-     * Overrides the onDestroy() Method to cancel all still active Tasks, so it wont continue
-     * running in the Background
+     * Overrides the onDestroy() Method to cancel all still active Tasks so it will not continue
+     * to run in the Background
      */
     @Override
     public void onDestroy() {
         Logger.d(TAG, "onDestroy");
-
         if (BQTask != null && BQTask.getStatus().equals(AsyncTask.Status.RUNNING))
             BQTask.cancel(true);
         if (DQTask != null && DQTask.getStatus().equals(AsyncTask.Status.RUNNING))
@@ -127,10 +125,14 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      */
     private void nextQuestion() {
         Logger.i(TAG, "nextQuestion ");
+
+        // Getting the Question and writing it into the designated TextView
         TextView tv = (TextView) findViewById(R.id.game_textView_question);
         String question = "Test";//TODO - load Question from selected categorys from db
-        HashMap<String,Boolean> answers = new HashMap<>();
+        tv.setText(question);
 
+        // Initializing the HashMap for the answers including their true false flag
+        answers = new HashMap<String, Boolean>();
 
         //TODO - save id used Questions in File --> saveData(int id) if(!containsData(id))
         //TODO - load answers from db
@@ -141,20 +143,12 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         tmp[2] = "Answer C";
         tmp[3] = "Answer D";
 
-        answer[0] = false;
-        answer[1] = true;
-        answer[2] = false;
-        answer[3] = false;
+        answers.put(tmp[0], false);
+        answers.put(tmp[1], true);
+        answers.put(tmp[2], false);
+        answers.put(tmp[3], false);
 
-        answers.put(tmp[0], answer[0]);
-        answers.put(tmp[1], answer[1]);
-        answers.put(tmp[2], answer[2]);
-        answers.put(tmp[3], answer[3]);
-
-        tv.setText(question);
-
-        int curAnswer = 0;
-
+        // Resetting the AnswerButtons to their default state
         for(ToggleButton tb : tButtons){
             tb.setBackgroundResource(R.drawable.blue);
             tb.setChecked(false);
@@ -164,13 +158,9 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     }
 
     /**
-     * TODO Fix this Method
-     * TODO Always writes the order D C A B
-     * TODO Does not write the true/false flag at the right spot into answers because
-     * TODO Insert point for the last insertion into answers[] is always at 0
-     *
      * sets answers random to the buttons and adds information to the global answer array
-     * @param answerMap Hashmap of answers and true/false values
+     *
+     * @param answerMap     Hashmap of answers and true/false values
      */
     private void setAnswersRandom(HashMap<String, Boolean> answerMap) {
         Logger.i(TAG, "setAnswersRandom");
@@ -183,14 +173,12 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         for (String key : keys) {
             int number = r.nextInt(count);
 
+            // Setting the text for each state of a ToggleButton
             tempButtons.get(number).setText(key);
             tempButtons.get(number).setTextOn(key);
             tempButtons.get(number).setTextOff(key);
 
             tempButtons.remove(number);
-
-            Logger.i(TAG, "Number: " + number);
-            answer[number] = answerMap.get(key);
             --count;
         }
     }
@@ -214,19 +202,17 @@ public class StartGameActivity extends FullscreenLayoutActivity{
                 ++count;
             }
         }
-        /*if (count != number)
-            return 0;
-        else
-            return 1;*/
     }
 
     private boolean hasLives() {
-        return this.life > 0;
+        Logger.i(TAG, "hasLives");
+        return this.life >= 0;
     }
 
     private final String file = "already_answered_Questions";
 
     private void saveData(int id) {
+        Logger.i(TAG, "saveData");
         FileOutputStream outputStream;
         try {
             outputStream = openFileOutput(file, Context.MODE_PRIVATE);
@@ -242,6 +228,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      * @return
      */
     private boolean containsData(int id) {
+        Logger.i(TAG, "containsData");
         FileInputStream inputStream;
         String s;
         try {
@@ -362,8 +349,8 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             //for (int i = 30; i >= 0; --i) {
             try {
                 onProgressUpdate(1);
-                Thread.sleep(3000);
-                GUI.sleep(3000);
+                Thread.sleep(2000);
+                GUI.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -382,7 +369,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             int wrongAnswers = 0;
 
             for (int i = 0; i < tButtons.size(); ++i) {
-                if (tButtons.get(i).isChecked() != answer[i]) {
+                if (tButtons.get(i).isChecked() != answers.get(tButtons.get(i).getTextOn())) {
                     wrongAnswers++;
                     tButtons.get(i).setBackgroundResource(R.drawable.red);
                 } else {

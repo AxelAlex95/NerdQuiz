@@ -75,7 +75,7 @@ public class MainMenuActivity extends FullscreenLayoutActivity {
      */
     public void showHighscores(View view) {
         Logger.i(TAG, "showHighscores");
-        // startActivity(new Intent(this, HighscoreActivity.class));
+        startActivity(new Intent(this, HighscoreActivity.class));
     }
 
     /**

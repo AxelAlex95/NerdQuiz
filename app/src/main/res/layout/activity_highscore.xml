@@ -3,4 +3,5 @@
                                    android:id="@+id/pager"
                                    android:layout_width="match_parent"
                                    android:layout_height="match_parent"
-                                   tools:context="matsematics.nerdquiz.HighscoreActivity"/>
+                                   tools:context="matsematics.nerdquiz.HighscoreActivity"
+                                   android:background="@drawable/bg_start"/>

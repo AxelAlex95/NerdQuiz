@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="matsematics.nerdquiz" >
+          package="matsematics.nerdquiz" >
 
     <application
         android:allowBackup="true"
@@ -18,8 +18,7 @@
         </activity>
         <activity
             android:name=".CategoryActivity"
-            android:label="CategoriesActivity"
-            android:parentActivityName=".MainMenuActivity" >
+            android:label="CategoriesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="matsematics.nerdquiz.MainMenuActivity" />
@@ -30,8 +29,7 @@
         </activity>
         <activity
             android:name=".HighscoreActivity"
-            android:label="Highscores"
-            android:parentActivityName=".MainMenuActivity" >
+            android:label="Highscores">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="matsematics.nerdquiz.MainMenuActivity" />

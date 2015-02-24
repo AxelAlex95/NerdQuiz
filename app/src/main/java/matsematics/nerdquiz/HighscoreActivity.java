@@ -74,7 +74,6 @@ public class HighscoreActivity extends FullscreenLayoutActivity implements Actio
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-
     }
 
     @Override

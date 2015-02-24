@@ -1,8 +1,7 @@
 package matsematics.nerdquiz;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.support.v7.app.ActionBarActivity;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,7 +10,10 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import Logging.Logger;
 
@@ -35,7 +37,6 @@ public class CategoryActivity extends FullscreenLayoutActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Logger.i(TAG, "onCreateOptionsMenu");
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_category, menu);
         return true;
     }
@@ -43,12 +44,9 @@ public class CategoryActivity extends FullscreenLayoutActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Logger.i(TAG, "onCreate");
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -58,7 +56,7 @@ public class CategoryActivity extends FullscreenLayoutActivity {
 
     public void startGame(View view){
         Logger.i(TAG, "startGame");
-        Intent intent = new Intent(this,StartGameActivity.class);
+        Intent intent = new Intent(this,GameActivity.class);
         startActivity(intent);
     }
 
@@ -79,25 +77,38 @@ public class CategoryActivity extends FullscreenLayoutActivity {
             checkBox.setText(categories.get(i));
             categories_layout.addView(checkBox, params);
             checkBox.setPadding(45,0,0,0);
-            checkBox.setBackgroundColor(Color.parseColor("#78FFFFFF"));
+            checkBox.setBackgroundResource(R.drawable.green);
             checkBox.setChecked(true);
         }
     }
 
     /**
-     *
-     * @return  ArrayList with all Categories
+     * ArrayList with all Categories
      */
     private void getCategories() {
         Logger.i(TAG, "getCategories");
         categories = new ArrayList<String>();
 
-        categories.add("How I met your mother");
-        categories.add("IT");
-        categories.add("Retro Games");
-        categories.add("Star Wars");
-        categories.add("Start Game");
-        categories.add("The Big Bang Theory");
-        categories.add("Tolkien\'s Legendarium");
+        AssetManager assetManager = getAssets();
+        String s;
+        Scanner sc;
+        InputStream input;
+
+        try {
+            input = assetManager.open("Kategorien.txt");
+            String answer;
+
+            sc = new Scanner(input, "UTF-8");
+
+            while (sc.hasNextLine()) {
+                s = sc.nextLine();
+                if (s.length() > 0 ) {
+                    categories.add(s.trim());
+                }
+            }
+        } catch (IOException e) {
+            Logger.i(TAG, "getCategories", e);
+            e.printStackTrace();
+        }
     }
 }

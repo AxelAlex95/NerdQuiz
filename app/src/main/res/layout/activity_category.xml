@@ -10,15 +10,6 @@
                 android:layout_gravity="top"
                 tools:context="matsematics.nerdquiz.CategoryActivity">
 
-<!--- Layout for a CheckBox
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="CATEGORY NAME"
-        android:background="#78FFFFFF"
-        android:layout_marginBottom="3dp"/>
--->
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,6 +44,7 @@
     android:text="@string/start_game"
     android:id="@+id/category_button_startGame"
     android:onClick="startGame"
+    android:background="@drawable/button_default"
     android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

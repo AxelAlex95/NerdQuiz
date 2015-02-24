@@ -1,6 +1,8 @@
 package matsematics.nerdquiz;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,10 +30,10 @@ import Logging.Logger;
  * Reads and writes Questions into the GameScreen
  * Processes the user input etc.
  */
-public class GameActivity extends FullscreenLayoutActivity{
+public class GameActivity extends FullscreenLayoutActivity implements HighscoreDialog.inputResult {
     private static final String     TAG = "GameActivity";
-    int                             life;
-    int                             highscore;
+    private int                     life;
+    private static int              highscore;
     ArrayList<ToggleButton>         tButtons;
     ArrayList<ImageView>            lives;
     Context                         guiContext;
@@ -231,9 +233,9 @@ public class GameActivity extends FullscreenLayoutActivity{
         questions = new ArrayList<String>();
         AssetManager assetManager = getAssets();
         String s;
-        Scanner sc = null;
-
+        Scanner sc;
         InputStream input;
+
         try {
             String[] list = assetManager.list("");
             input = assetManager.open("Fragen.txt");
@@ -243,7 +245,7 @@ public class GameActivity extends FullscreenLayoutActivity{
 
             while (sc.hasNextLine()) {
                 s = sc.nextLine();
-                if (s.charAt(0) == ('#')) {
+                if (s.length() > 0 && s.charAt(0) == ('#')) {
                     s = s.substring(1).trim();
                     questions.add(s);
                     questionList.put(s, new HashMap<String, Boolean>());
@@ -293,6 +295,28 @@ public class GameActivity extends FullscreenLayoutActivity{
         Logger.i(TAG, "onConfirm");
 
         Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
+    }
+
+    public void doDialogAlert() {
+        Logger.i(TAG, "doDialogAlert");
+
+        HighscoreDialog newFragment = new HighscoreDialog();
+        newFragment.setCancelable(false);
+        newFragment.show(getFragmentManager(), "highscoreDialog");
+    }
+
+    public static int getHighscore() {
+        return highscore;
+    }
+
+    @Override
+    public void Submit() {
+        Logger.i(TAG, "Submit");
+    }
+
+    @Override
+    public void Cancel() {
+        Logger.i(TAG, "Cancel");
     }
 
     /**
@@ -434,9 +458,10 @@ public class GameActivity extends FullscreenLayoutActivity{
             Logger.i(TAG, "onPostExecute");
 
             if (!hasLives()) {
-                // TODO BEENDEN --> Speicher Highscore in Liste und zeige Dialog "Verloren"
+                doDialogAlert();
                 Logger.i(TAG, "Score: " + highscore);
             } else if (!(questions.size() > 0)) {
+                doDialogAlert();
                 Toast.makeText(guiContext, "You answered all Questions,\n Happy Birthday to you!\nScore: " + highscore, Toast.LENGTH_LONG).show();
             } else {
                 startAsyncMain();

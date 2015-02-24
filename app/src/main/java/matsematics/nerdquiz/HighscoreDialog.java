@@ -33,12 +33,9 @@ public class HighscoreDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.dialog_highscore, null);
-        ((TextView) view.findViewById(R.id.highscore_text)).setText("Enter your name to submit your highscore\nHighscore: " + GameActivity.getHighscore());
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.dialog_highscore, null))
-                // .setCancelable(false)
-                // Add action buttons
+        ((TextView) view.findViewById(R.id.highscore_text)).setText("Enter your name to submit your Score\nScore: " + GameActivity.getHighscore());
+
+        builder.setView(view)
                 .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {

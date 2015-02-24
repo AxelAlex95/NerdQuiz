@@ -3,6 +3,7 @@ package matsematics.nerdquiz;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,24 +32,26 @@ import Logging.Logger;
  * Processes the user input etc.
  */
 public class GameActivity extends FullscreenLayoutActivity implements HighscoreDialog.inputResult {
-    private static final String     TAG = "GameActivity";
-    private int                     life;
-    private static int              highscore;
-    ArrayList<ToggleButton>         tButtons;
-    ArrayList<ImageView>            lives;
-    Context                         guiContext;
+    private static final String                 TAG = "GameActivity";
+    private int                                 life;
+    private static int                          highscore;
+    private ArrayList<ToggleButton>             tButtons;
+    private ArrayList<ImageView>                lives;
 
     // Questions from Textfile
-    HashMap<String,HashMap<String, Boolean>> questionList;
-    ArrayList<String>               questions;
-    String                          currentQuestion;
+    private HashMap<String,HashMap<String, Boolean>>    questionList;
+    private ArrayList<String>                           questions;
+    private String                                      currentQuestion;
 
     // ASyncTasks are saved so they can be canceled in onDestroy()
-    AsyncTask                       DQTask;
-    AsyncTask                       BQTask;
+    private AsyncTask                           DQTask;
+    private AsyncTask                           BQTask;
+
+    private boolean                             DQActive;
+    private boolean                             BQActive;
 
     // Saving the Thread reference to let it sleep while BetweenQuestions is running
-    Thread                          GUI;
+    private Thread                              GUI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +61,6 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
         this.GUI = Thread.currentThread();
         this.BQTask = null;
         this.DQTask = null;
-        this.guiContext = this;
 
         this.highscore = 0;
         this.life = 7;
@@ -123,6 +125,8 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
     @Override
     public void onDestroy() {
         Logger.d(TAG, "onDestroy");
+        BQActive = DQActive = false;
+
         if (BQTask != null && BQTask.getStatus().equals(AsyncTask.Status.RUNNING))
             BQTask.cancel(true);
         if (DQTask != null && DQTask.getStatus().equals(AsyncTask.Status.RUNNING))
@@ -237,7 +241,6 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
         InputStream input;
 
         try {
-            String[] list = assetManager.list("");
             input = assetManager.open("Fragen.txt");
             String answer;
 
@@ -294,7 +297,7 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
     public void onConfirm(View view) {
         Logger.i(TAG, "onConfirm");
 
-        Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
+        DQActive = false;
     }
 
     public void doDialogAlert() {
@@ -312,11 +315,13 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
     @Override
     public void Submit() {
         Logger.i(TAG, "Submit");
+        onBackPressed();
     }
 
     @Override
     public void Cancel() {
         Logger.i(TAG, "Cancel");
+        onBackPressed();
     }
 
     /**
@@ -355,8 +360,13 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
             Logger.i(TAG, "doInBackground");
             for (int i = 10; i >= 0; --i) {
                 try {
-                    publishProgress(i);
-                    Thread.sleep(1000);
+
+                    if (DQActive) {
+                        publishProgress(i);
+                        Thread.sleep(1000);
+                    } else {
+                        publishProgress(0);
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -369,6 +379,7 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
          */
         protected void onPreExecute() {
             Logger.i(TAG, "onPreExecute");
+            DQActive = true;
 
             this.countdown = (TextView) findViewById(R.id.game_textView_countdown);
             this.countdown.setText("10");
@@ -390,6 +401,7 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
          */
         protected void onPostExecute(Void arg0) {
             Logger.i(TAG, "onPostExecute");
+            DQActive = false;
             startAsyncBackground();
         }
     }
@@ -416,7 +428,6 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
             return null;
         }
 
@@ -426,6 +437,7 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
          */
         protected void onPreExecute() {
             Logger.i(TAG, "onPreExecute");
+            BQActive = true;
 
             int wrongAnswers = 0;
 
@@ -458,14 +470,14 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
             Logger.i(TAG, "onPostExecute");
 
             if (!hasLives()) {
+                BQActive = DQActive = false;
                 doDialogAlert();
-                Logger.i(TAG, "Score: " + highscore);
             } else if (!(questions.size() > 0)) {
+                BQActive = DQActive = false;
                 doDialogAlert();
-                Toast.makeText(guiContext, "You answered all Questions,\n Happy Birthday to you!\nScore: " + highscore, Toast.LENGTH_LONG).show();
             } else {
+                BQActive = false;
                 startAsyncMain();
-                BQTask.cancel(true);
             };
         }
     }

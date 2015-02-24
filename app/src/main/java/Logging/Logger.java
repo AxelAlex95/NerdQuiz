@@ -63,7 +63,7 @@ public class Logger {
         for (String log : logEntries) {
 
         }
-        /*
+        */
     }
 
     private static void LogEntry(String cat, String tag, String msg) {

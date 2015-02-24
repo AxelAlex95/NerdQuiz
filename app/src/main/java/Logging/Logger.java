@@ -1,7 +1,9 @@
 package Logging;
 
+import android.content.Context;
+import android.text.format.Time;
 import android.util.Log;
-
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -11,9 +13,10 @@ import java.util.ArrayList;
  * Created by Sommer on 11.02.2015.
  */
 public class Logger {
-    private static final String TAG = "Logger";
-    private static boolean LOGGING = false;
-    private static ArrayList<LogEntry> logEntries;
+    private static boolean              LOGGING = false;
+    private static ArrayList<String>    logEntries;
+    private static Time                 time;
+    private static final String         myFile = "myData";
 
     /**
      * Sets the LOGGING parameter on true or false
@@ -28,7 +31,7 @@ public class Logger {
      * Creates a new Log
      */
     private static void newLog() {
-        logEntries = new ArrayList<LogEntry>();
+        logEntries = new ArrayList<String>();
     }
 
     /**
@@ -59,9 +62,19 @@ public class Logger {
      *
      * @param filename     Name of the file in which the Log shall be saved
      */
-    public static void writeLog(String filename) {
-
+    public static void writeLog(String filename, Context context) {
+        File file = new File(context.getFilesDir(), filename);
     }
+
+    private static void LogEntry(String cat, String tag, String msg) {
+        time = new Time();
+        time.setToNow();
+
+        logEntries.add(String.format("%02d-%02d %02d:%02d:%02d \t %s/%s/%s",
+                time.month, time.monthDay, time.hour, time.minute, time.second,
+                cat, tag, msg));
+    }
+
     /****************************************
      * Wrapper fuer android.java.util.Log   *
      ***************************************/
@@ -75,7 +88,7 @@ public class Logger {
     public static void d(String tag, String msg) {
         if(LOGGING) {
             if(LOGGING) {
-                logEntries.add(new LogEntry("D", tag, msg));
+                LogEntry("D", tag, msg);
                 Log.d(tag, msg);
             }
         }
@@ -86,12 +99,12 @@ public class Logger {
      *
      * @param tag   Class in which this message originated
      * @param msg   Include the Method that produced this message
-     * @param tr
+     * @param tr    Exception that occurred
      */
     public static void d(String tag, String msg, Throwable tr) {
         if(LOGGING)
             if(LOGGING) {
-                logEntries.add(new LogEntry("D", tag, msg));
+                LogEntry("D", tag, msg);
                 Log.d(tag, msg, tr);
             }
     }
@@ -105,7 +118,7 @@ public class Logger {
     public static void e(String tag, String msg) {
         if(LOGGING)
             if(LOGGING) {
-                logEntries.add(new LogEntry("E", tag, msg));
+                LogEntry("E", tag, msg);
                 Log.e(tag, msg);
             }
     }
@@ -115,11 +128,11 @@ public class Logger {
      *
      * @param tag   Class that produced this Error
      * @param msg   Include the Method that this Error has occurred in
-     * @param tr
+     * @param tr    Exception that occurred
      */
     public static void e(String tag, String msg, Throwable tr) {
         if(LOGGING) {
-            logEntries.add(new LogEntry("E", tag, msg));
+            LogEntry("E", tag, msg);
             Log.e(tag, msg, tr);
         }
     }
@@ -132,7 +145,7 @@ public class Logger {
      */
     public static void i(String tag, String msg) {
         if(LOGGING) {
-            logEntries.add(new LogEntry("I", tag, msg));
+            LogEntry("I", tag, msg);
             Log.i(tag, msg);
         }
     }
@@ -142,11 +155,11 @@ public class Logger {
      *
      * @param tag   Class that produced this Info
      * @param msg   Include the Method that produced this message
-     * @param tr
+     * @param tr    Exception that occurred
      */
     public static void i(String tag, String msg, Throwable tr) {
         if(LOGGING) {
-            logEntries.add(new LogEntry("I", tag, msg));
+            LogEntry("I", tag, msg);
             Log.i(tag, msg, tr);
         }
     }
@@ -159,7 +172,7 @@ public class Logger {
      */
     public static void v(String tag, String msg) {
         if(LOGGING) {
-            logEntries.add(new LogEntry("V", tag, msg));
+            LogEntry("V", tag, msg);
             Log.v(tag, msg);
         }
     }
@@ -169,12 +182,12 @@ public class Logger {
      *
      * @param tag   Class that produced this Verbose
      * @param msg   Include the Method that produced this message
-     * @param tr
+     * @param tr    Exception that occurred
      */
     public static void v(String tag, String msg, Throwable tr) {
         if(LOGGING)
             if(LOGGING) {
-                logEntries.add(new LogEntry("V", tag, msg));
+                LogEntry("V", tag, msg);
                 Log.v(tag, msg, tr);
             }
     }
@@ -183,7 +196,7 @@ public class Logger {
      * Logs a Warning Message - this does not Log the Message in LogEntries
      *
      * @param tag   Class that produced this Warning
-     * @param tr
+     * @param tr    Exception that occurred
      */
     public static void w(String tag, Throwable tr) {
         if(LOGGING)
@@ -199,7 +212,7 @@ public class Logger {
     public static void w(String tag, String msg) {
         if(LOGGING)
             if(LOGGING) {
-                logEntries.add(new LogEntry("W", tag, msg));
+                LogEntry("W", tag, msg);
                 Log.w(tag, msg);
             }
     }
@@ -209,12 +222,12 @@ public class Logger {
      *
      * @param tag   Class that produced this Warning
      * @param msg   Include the Method that produced this message
-     * @param tr
+     * @param tr    Exception that occurred
      */
     public static void w(String tag, String msg, Throwable tr) {
         if(LOGGING)
             if(LOGGING) {
-                logEntries.add(new LogEntry("W", tag, msg));
+                LogEntry("W", tag, msg);
                 Log.w(tag, msg, tr);
             }
     }
@@ -233,7 +246,7 @@ public class Logger {
     public static void wtf(String tag, String msg) {
         if(LOGGING)
             if(LOGGING) {
-                logEntries.add(new LogEntry("WTF", tag, msg));
+                LogEntry("WTF", tag, msg);
                 Log.wtf(tag, msg);
             }
     }
@@ -248,7 +261,7 @@ public class Logger {
     public static void wtf(String tag, String msg, Throwable tr) {
         if(LOGGING)
             if(LOGGING) {
-                logEntries.add(new LogEntry("WTF", tag, msg));
+                LogEntry("WTF", tag, msg);
                 Log.wtf(tag, msg, tr);
             }
     }

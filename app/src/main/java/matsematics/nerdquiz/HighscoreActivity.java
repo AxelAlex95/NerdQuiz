@@ -24,8 +24,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import Logging.Logger;
+
 
 public class HighscoreActivity extends ActionBarActivity implements ActionBar.TabListener {
+    private static final String TAG = "HighscoreActivity";
 
   private class HighscoreEntry {
     private String name;
@@ -88,6 +91,7 @@ public class HighscoreActivity extends ActionBarActivity implements ActionBar.Ta
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+      Logger.i(TAG, "onCreate");
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_highscore);
 
@@ -122,6 +126,8 @@ public class HighscoreActivity extends ActionBarActivity implements ActionBar.Ta
     actionBar.addTab(tabGlobal);
 
     ListView lv = (ListView) findViewById(R.id.highscore_list);
+      Logger.i(TAG, "ListView = " + (lv != null));
+      Logger.i(TAG, "highscores = " + (highscores != null));
     lv.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, highscores));
   }
 

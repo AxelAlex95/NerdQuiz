@@ -1,6 +1,7 @@
 package matsematics.nerdquiz;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +11,10 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -24,13 +28,18 @@ import Logging.Logger;
  * Reads and writes Questions into the GameScreen
  * Processes the user input etc.
  */
-public class StartGameActivity extends FullscreenLayoutActivity{
-    private static final String     TAG = "StartGameActivity";
+public class GameActivity extends FullscreenLayoutActivity{
+    private static final String     TAG = "GameActivity";
     int                             life;
-    HashMap<String, Boolean> answers;
     int                             highscore;
     ArrayList<ToggleButton>         tButtons;
     ArrayList<ImageView>            lives;
+    Context                         guiContext;
+
+    // Questions from Textfile
+    HashMap<String,HashMap<String, Boolean>> questionList;
+    ArrayList<String>               questions;
+    String                          currentQuestion;
 
     // ASyncTasks are saved so they can be canceled in onDestroy()
     AsyncTask                       DQTask;
@@ -41,13 +50,13 @@ public class StartGameActivity extends FullscreenLayoutActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Logger.startLogging();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
         this.GUI = Thread.currentThread();
         this.BQTask = null;
         this.DQTask = null;
+        this.guiContext = this;
 
         this.highscore = 0;
         this.life = 7;
@@ -55,6 +64,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         initAnswerButtons();
         initLife();
 
+        readQuestions();
         startAsyncMain();
     }
 
@@ -124,29 +134,18 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      * Initializes the new Question and its answers for the next round
      */
     private void nextQuestion() {
-        Logger.i(TAG, "nextQuestion ");
+        Logger.i(TAG, "nextQuestion");
 
         // Getting the Question and writing it into the designated TextView
         TextView tv = (TextView) findViewById(R.id.game_textView_question);
-        String question = "Test";//TODO - load Question from selected categorys from db
-        tv.setText(question);
 
-        // Initializing the HashMap for the answers including their true false flag
-        answers = new HashMap<String, Boolean>();
+        Random r = new Random();
+        Integer rnd = r.nextInt(questions.size());
 
-        //TODO - save id used Questions in File --> saveData(int id) if(!containsData(id))
-        //TODO - load answers from db
-        String[] tmp = new String[4];
+        currentQuestion = questions.get(rnd);
+        tv.setText(currentQuestion);
 
-        tmp[0] = "Answer A";
-        tmp[1] = "Answer B";
-        tmp[2] = "Answer C";
-        tmp[3] = "Answer D";
-
-        answers.put(tmp[0], false);
-        answers.put(tmp[1], true);
-        answers.put(tmp[2], false);
-        answers.put(tmp[3], false);
+        questions.remove(currentQuestion);
 
         // Resetting the AnswerButtons to their default state
         for(ToggleButton tb : tButtons){
@@ -154,7 +153,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             tb.setChecked(false);
         }
 
-        setAnswersRandom(answers);
+        setAnswersRandom(questionList.get(currentQuestion));
     }
 
     /**
@@ -205,8 +204,8 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     }
 
     private boolean hasLives() {
-        Logger.i(TAG, "hasLives");
-        return this.life >= 0;
+        Logger.i(TAG, "hasLives: " + this.life);
+        return this.life > 0;
     }
 
     private final String file = "already_answered_Questions";
@@ -218,6 +217,45 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             outputStream = openFileOutput(file, Context.MODE_PRIVATE);
             FileUtils.writeString(outputStream,id+"");
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Reads the Questions and Answers from the Fragen.txt
+     * which is included in the applications assets folder
+     */
+    private void readQuestions() {
+        Logger.i(TAG, "readQuestions");
+        questionList = new HashMap<String, HashMap<String, Boolean>>();
+        questions = new ArrayList<String>();
+        AssetManager assetManager = getAssets();
+        String s;
+        Scanner sc = null;
+
+        InputStream input;
+        try {
+            String[] list = assetManager.list("");
+            input = assetManager.open("Fragen.txt");
+            String answer;
+
+            sc = new Scanner(input, "UTF-8");
+
+            while (sc.hasNextLine()) {
+                s = sc.nextLine();
+                if (s.charAt(0) == ('#')) {
+                    s = s.substring(1).trim();
+                    questions.add(s);
+                    questionList.put(s, new HashMap<String, Boolean>());
+                    for (int i = 0; i < 4; ++i) {
+                        answer = sc.nextLine();
+                        Boolean isCorrect = (answer.charAt(0) == '1');
+                        questionList.get(s).put(answer.substring(1).trim(), isCorrect);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            Logger.i(TAG, "readQuestions", e);
             e.printStackTrace();
         }
     }
@@ -235,14 +273,15 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             inputStream = openFileInput(file);
             s = new Scanner(inputStream, "UTF-8").next();
             inputStream.close();
-            String[]ids = s.split(",");
-            for(String category:ids){
-                if(category.equals(id+""))return true;
-            }return false;
+            String[] ids = s.split(",");
+            for(String category : ids) {
+                if(category.equals(id + ""))
+                    return true;
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
 
     /**
@@ -346,7 +385,6 @@ public class StartGameActivity extends FullscreenLayoutActivity{
          */
         protected Void doInBackground(Void... arg0) {
             Logger.i(TAG, "doInBackground");
-            //for (int i = 30; i >= 0; --i) {
             try {
                 onProgressUpdate(1);
                 Thread.sleep(2000);
@@ -354,7 +392,6 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //}
 
             return null;
         }
@@ -369,7 +406,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             int wrongAnswers = 0;
 
             for (int i = 0; i < tButtons.size(); ++i) {
-                if (tButtons.get(i).isChecked() != answers.get(tButtons.get(i).getTextOn())) {
+                if (tButtons.get(i).isChecked() != questionList.get(currentQuestion).get(tButtons.get(i).getTextOn())) {
                     wrongAnswers++;
                     tButtons.get(i).setBackgroundResource(R.drawable.red);
                 } else {
@@ -399,6 +436,8 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             if (!hasLives()) {
                 // TODO BEENDEN --> Speicher Highscore in Liste und zeige Dialog "Verloren"
                 Logger.i(TAG, "Score: " + highscore);
+            } else if (!(questions.size() > 0)) {
+                Toast.makeText(guiContext, "You answered all Questions,\n Happy Birthday to you!\nScore: " + highscore, Toast.LENGTH_LONG).show();
             } else {
                 startAsyncMain();
                 BQTask.cancel(true);

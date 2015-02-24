@@ -25,7 +25,7 @@
                 android:value="matsematics.nerdquiz.MainMenuActivity" />
         </activity>
         <activity
-            android:name=".StartGameActivity"
+            android:name=".GameActivity"
             android:label="StartGameActivity" >
         </activity>
         <activity

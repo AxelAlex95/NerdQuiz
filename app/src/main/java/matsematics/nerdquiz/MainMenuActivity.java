@@ -1,8 +1,6 @@
 package matsematics.nerdquiz;
 
-import android.app.Fragment;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -85,6 +83,6 @@ public class MainMenuActivity extends FullscreenLayoutActivity {
      */
     public void startGame(View view) {
         Logger.i(TAG, "startGame");
-        startActivity(new Intent(this,StartGameActivity.class));
+        startActivity(new Intent(this, GameActivity.class));
     }
 }

@@ -56,25 +56,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/game_toggleButton_answer1"
-                    android:onClick="toggled"/>
+                    android:onClick="buttonToggle"/>
 
                 <ToggleButton
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/game_toggleButton_answer2"
-                    android:onClick="toggled" />
+                    android:onClick="buttonToggle" />
 
                 <ToggleButton
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/game_toggleButton_answer3"
-                    android:onClick="toggled" />
+                    android:onClick="buttonToggle" />
 
                 <ToggleButton
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/game_toggleButton_answer4"
-                    android:onClick="toggled" />
+                    android:onClick="buttonToggle" />
             </LinearLayout>
         </ScrollView>
     </FrameLayout>

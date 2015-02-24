@@ -13,6 +13,8 @@ import Logging.Logger;
  * Starting a new game
  * Selecting Categories
  * and taking a look at local and global Highscores
+ *
+ * @author Nell, Schwenke, Schulze-Dephoff, Sommer
  */
 public class MainMenuActivity extends FullscreenLayoutActivity {
     private static final String TAG = "MainMenuActivity";
@@ -20,30 +22,9 @@ public class MainMenuActivity extends FullscreenLayoutActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Logger.startLogging();
+        Logger.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-          return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -53,6 +34,7 @@ public class MainMenuActivity extends FullscreenLayoutActivity {
      */
     public void quitGame(View view) {
         Logger.i(TAG, "quitGame");
+        Logger.writeLog();
         onBackPressed();
     }
 
@@ -69,11 +51,11 @@ public class MainMenuActivity extends FullscreenLayoutActivity {
     /**
      * Shows local and global highscores for all games
      *
-     * @param view  The button that was pressed
+     * @param view  The button that was presse
      */
     public void showHighscores(View view) {
         Logger.i(TAG, "showHighscores");
-        // startActivity(new Intent(this, HighscoreActivity.class));
+        //startActivity(new Intent(this, HighscoreActivity.class));
     }
 
     /**

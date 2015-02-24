@@ -1,20 +1,15 @@
 package matsematics.nerdquiz;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +50,7 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Logger.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
@@ -76,6 +72,7 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
      * Initializes the life bar
      */
     private void initLife() {
+        Logger.i(TAG, "initLife");
         this.lives = new ArrayList<ImageView>();
 
         lives.add((ImageView) findViewById(R.id.game_lifeBar_heart1));
@@ -91,6 +88,7 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
     Initializes the AnswerButtons
      */
     private void initAnswerButtons() {
+        Logger.i(TAG, "initAnswerbuttons");
         this.tButtons = new ArrayList<ToggleButton>();
 
         this.tButtons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer1));
@@ -104,9 +102,8 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
      *
      * @param view  Button that was clicked
      */
-    public void toggled(View view) {
-
-        Logger.i(TAG, "toggled");
+    public void buttonToggle(View view) {
+        Logger.i(TAG, "buttonToggle");
         if (BQTask == null || !BQTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
             ToggleButton temp = (ToggleButton) view;
             if (temp.isChecked()) {
@@ -133,6 +130,18 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
             DQTask.cancel(true);
 
         super.onDestroy();
+    }
+
+
+    /**
+     * Skips the remaining timer and starts the BetweenQuestions Task
+     *
+     * @param view  Confirm button
+     */
+    public void onConfirm(View view) {
+        Logger.i(TAG, "onConfirm");
+
+        DQActive = false;
     }
 
     /**
@@ -190,6 +199,7 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
 
     /**
      * Method to call if Player looses lives
+     *
      * @param   number of lives Player lost
      * @return  0 if Player has lost his last life
      *          1 else
@@ -209,8 +219,13 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
         }
     }
 
+    /**
+     * Indicates if the user has lives left over in the current round
+     *
+     * @return boolean  User has lives left over
+     */
     private boolean hasLives() {
-        Logger.i(TAG, "hasLives: " + this.life);
+        Logger.i(TAG, "hasLives");
         return this.life > 0;
     }
 
@@ -289,16 +304,9 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
         return false;
     }
 
-    /**
-     * Skips the remaining timer and starts the BetweenQuestions Task
-     *
-     * @param view  Confirm button
-     */
-    public void onConfirm(View view) {
-        Logger.i(TAG, "onConfirm");
-
-        DQActive = false;
-    }
+    /************************************************************************************
+     *  Dialog Related Methods                                                      *
+     ***********************************************************************************/
 
     public void doDialogAlert() {
         Logger.i(TAG, "doDialogAlert");
@@ -323,6 +331,10 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
         Logger.i(TAG, "Cancel");
         onBackPressed();
     }
+
+    /************************************************************************************
+     *  AsyncTask start Methods                                                      *
+     ***********************************************************************************/
 
     /**
      * Starts the AsyncTask that runs while a Question is being answered by the user

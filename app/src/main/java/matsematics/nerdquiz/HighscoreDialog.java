@@ -33,7 +33,8 @@ public class HighscoreDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.dialog_highscore, null);
-        ((TextView) view.findViewById(R.id.highscore_text)).setText("Enter your name to submit your Score\nScore: " + GameActivity.getHighscore());
+        ((TextView) view.findViewById(R.id.highscore_text)).setText("Enter your name to submit your Score");
+        ((TextView) view.findViewById(R.id.score)).setText("Score: " + GameActivity.getHighscore());
 
         builder.setView(view)
                 .setPositiveButton("Submit", new DialogInterface.OnClickListener() {

@@ -36,14 +36,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="matsematics.nerdquiz.MainMenuActivity" />
         </activity>
-        <activity
-            android:name=".MainHighscoreActivity"
-            android:label="Highscores"
-            android:parentActivityName=".MainMenuActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="matsematics.nerdquiz.MainMenuActivity" />
-        </activity>
     </application>
 
 </manifest>

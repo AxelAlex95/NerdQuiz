@@ -16,7 +16,6 @@ public class Logger {
     private static boolean              LOGGING = false;
     private static ArrayList<String>    logEntries;
     private static Time                 time;
-    private static final String         myFile = "myData";
 
     /**
      * Sets the LOGGING parameter on true or false
@@ -49,7 +48,6 @@ public class Logger {
         if (logEntries == null) newLog();
     }
 
-
     /**
      * Stops logging, but keeps the Log
      */
@@ -59,19 +57,21 @@ public class Logger {
 
     /**
      * Writes the Log to a File
-     *
-     * @param filename     Name of the file in which the Log shall be saved
      */
-    public static void writeLog(String filename, Context context) {
-        File file = new File(context.getFilesDir(), filename);
+    public static void writeLog() {
+        /*
+        for (String log : logEntries) {
+
+        }
+        /*
     }
 
     private static void LogEntry(String cat, String tag, String msg) {
         time = new Time();
         time.setToNow();
 
-        logEntries.add(String.format("%02d-%02d %02d:%02d:%02d \t %s/%s/%s",
-                time.month, time.monthDay, time.hour, time.minute, time.second,
+        logEntries.add(String.format("%04d-%02d-%02d %02d:%02d:%02d \t %s/%s: %s",
+                time.year, (time.month + 1), time.monthDay, time.hour, time.minute, time.second,
                 cat, tag, msg));
     }
 

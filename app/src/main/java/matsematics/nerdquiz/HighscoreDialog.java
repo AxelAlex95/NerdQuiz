@@ -7,12 +7,19 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class HighscoreDialog extends DialogFragment {
 
@@ -22,7 +29,8 @@ public class HighscoreDialog extends DialogFragment {
     }
 
     private inputResult inputResult;
-
+    private String name;
+    private static View view;
     public HighscoreDialog() {
     }
 
@@ -32,7 +40,7 @@ public class HighscoreDialog extends DialogFragment {
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View view = inflater.inflate(R.layout.dialog_highscore, null);
+        view = inflater.inflate(R.layout.dialog_highscore, null);
         ((TextView) view.findViewById(R.id.highscore_text)).setText("Enter your name to submit your Score");
         ((TextView) view.findViewById(R.id.score)).setText("Score: " + GameActivity.getHighscore());
 
@@ -60,5 +68,9 @@ public class HighscoreDialog extends DialogFragment {
             throw new ClassCastException(activity.toString()
                     + " must implement inputResult");
         }
+    }
+
+    public static String getName() {
+        return ((EditText) view.findViewById(R.id.highscore_name)).getText().toString();
     }
 }

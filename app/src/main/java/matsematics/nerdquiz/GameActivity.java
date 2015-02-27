@@ -5,6 +5,7 @@ import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -323,6 +324,7 @@ public class GameActivity extends FullscreenLayoutActivity implements HighscoreD
     @Override
     public void Submit() {
         Logger.i(TAG, "Submit");
+        (new LocalHighscoreActivity()).addHighscore(HighscoreDialog.getName(), highscore);
         onBackPressed();
     }
 

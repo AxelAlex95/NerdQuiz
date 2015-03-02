@@ -20,20 +20,11 @@ public class FullscreenLayoutActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hideActionBar();
+        getSupportActionBar().hide();
         setFullscreen();
 
         // Sets the Application to Potrait and this can not be changed
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-    }
-
-    /**
-     * Hides the Actionbar of the Activity
-     */
-    protected void hideActionBar()
-    {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
     }
 
     /**

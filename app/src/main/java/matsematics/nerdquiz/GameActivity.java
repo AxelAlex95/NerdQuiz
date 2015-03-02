@@ -1,16 +1,19 @@
 package matsematics.nerdquiz;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -24,24 +27,31 @@ import Logging.Logger;
  * Reads and writes Questions into the GameScreen
  * Processes the user input etc.
  */
-public class StartGameActivity extends FullscreenLayoutActivity{
-    private static final String     TAG = "StartGameActivity";
-    int                             life;
-    HashMap<String, Boolean> answers;
-    int                             highscore;
-    ArrayList<ToggleButton>         tButtons;
-    ArrayList<ImageView>            lives;
+public class GameActivity extends FullscreenLayoutActivity implements HighscoreDialog.inputResult {
+    private static final String                 TAG = "GameActivity";
+    private int                                 life;
+    private static int                          highscore;
+    private ArrayList<ToggleButton>             tButtons;
+    private ArrayList<ImageView>                lives;
+
+    // Questions from Textfile
+    private HashMap<String,HashMap<String, Boolean>>    questionList;
+    private ArrayList<String>                           questions;
+    private String                                      currentQuestion;
 
     // ASyncTasks are saved so they can be canceled in onDestroy()
-    AsyncTask                       DQTask;
-    AsyncTask                       BQTask;
+    private AsyncTask                           DQTask;
+    private AsyncTask                           BQTask;
+
+    private boolean                             DQActive;
+    private boolean                             BQActive;
 
     // Saving the Thread reference to let it sleep while BetweenQuestions is running
-    Thread                          GUI;
+    private Thread                              GUI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Logger.startLogging();
+        Logger.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
@@ -55,6 +65,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         initAnswerButtons();
         initLife();
 
+        readQuestions();
         startAsyncMain();
     }
 
@@ -62,6 +73,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      * Initializes the life bar
      */
     private void initLife() {
+        Logger.i(TAG, "initLife");
         this.lives = new ArrayList<ImageView>();
 
         lives.add((ImageView) findViewById(R.id.game_lifeBar_heart1));
@@ -77,6 +89,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     Initializes the AnswerButtons
      */
     private void initAnswerButtons() {
+        Logger.i(TAG, "initAnswerbuttons");
         this.tButtons = new ArrayList<ToggleButton>();
 
         this.tButtons.add((ToggleButton) findViewById(R.id.game_toggleButton_answer1));
@@ -90,9 +103,8 @@ public class StartGameActivity extends FullscreenLayoutActivity{
      *
      * @param view  Button that was clicked
      */
-    public void toggled(View view) {
-
-        Logger.i(TAG, "toggled");
+    public void buttonToggle(View view) {
+        Logger.i(TAG, "buttonToggle");
         if (BQTask == null || !BQTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
             ToggleButton temp = (ToggleButton) view;
             if (temp.isChecked()) {
@@ -111,6 +123,8 @@ public class StartGameActivity extends FullscreenLayoutActivity{
     @Override
     public void onDestroy() {
         Logger.d(TAG, "onDestroy");
+        BQActive = DQActive = false;
+
         if (BQTask != null && BQTask.getStatus().equals(AsyncTask.Status.RUNNING))
             BQTask.cancel(true);
         if (DQTask != null && DQTask.getStatus().equals(AsyncTask.Status.RUNNING))
@@ -119,34 +133,35 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         super.onDestroy();
     }
 
+
+    /**
+     * Skips the remaining timer and starts the BetweenQuestions Task
+     *
+     * @param view  Confirm button
+     */
+    public void onConfirm(View view) {
+        Logger.i(TAG, "onConfirm");
+
+        DQActive = false;
+    }
+
     /**
      * Resets the Background Color of all Buttons back to default
      * Initializes the new Question and its answers for the next round
      */
     private void nextQuestion() {
-        Logger.i(TAG, "nextQuestion ");
+        Logger.i(TAG, "nextQuestion");
 
         // Getting the Question and writing it into the designated TextView
         TextView tv = (TextView) findViewById(R.id.game_textView_question);
-        String question = "Test";//TODO - load Question from selected categorys from db
-        tv.setText(question);
 
-        // Initializing the HashMap for the answers including their true false flag
-        answers = new HashMap<String, Boolean>();
+        Random r = new Random();
+        Integer rnd = r.nextInt(questions.size());
 
-        //TODO - save id used Questions in File --> saveData(int id) if(!containsData(id))
-        //TODO - load answers from db
-        String[] tmp = new String[4];
+        currentQuestion = questions.get(rnd);
+        tv.setText(currentQuestion);
 
-        tmp[0] = "Answer A";
-        tmp[1] = "Answer B";
-        tmp[2] = "Answer C";
-        tmp[3] = "Answer D";
-
-        answers.put(tmp[0], false);
-        answers.put(tmp[1], true);
-        answers.put(tmp[2], false);
-        answers.put(tmp[3], false);
+        questions.remove(currentQuestion);
 
         // Resetting the AnswerButtons to their default state
         for(ToggleButton tb : tButtons){
@@ -154,7 +169,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             tb.setChecked(false);
         }
 
-        setAnswersRandom(answers);
+        setAnswersRandom(questionList.get(currentQuestion));
     }
 
     /**
@@ -185,6 +200,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
 
     /**
      * Method to call if Player looses lives
+     *
      * @param   number of lives Player lost
      * @return  0 if Player has lost his last life
      *          1 else
@@ -204,9 +220,14 @@ public class StartGameActivity extends FullscreenLayoutActivity{
         }
     }
 
+    /**
+     * Indicates if the user has lives left over in the current round
+     *
+     * @return boolean  User has lives left over
+     */
     private boolean hasLives() {
         Logger.i(TAG, "hasLives");
-        return this.life >= 0;
+        return this.life > 0;
     }
 
     private final String file = "already_answered_Questions";
@@ -218,6 +239,44 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             outputStream = openFileOutput(file, Context.MODE_PRIVATE);
             FileUtils.writeString(outputStream,id+"");
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Reads the Questions and Answers from the Fragen.txt
+     * which is included in the applications assets folder
+     */
+    private void readQuestions() {
+        Logger.i(TAG, "readQuestions");
+        questionList = new HashMap<String, HashMap<String, Boolean>>();
+        questions = new ArrayList<String>();
+        AssetManager assetManager = getAssets();
+        String s;
+        Scanner sc;
+        InputStream input;
+
+        try {
+            input = assetManager.open("Fragen.txt");
+            String answer;
+
+            sc = new Scanner(input, "UTF-8");
+
+            while (sc.hasNextLine()) {
+                s = sc.nextLine();
+                if (s.length() > 0 && s.charAt(0) == ('#')) {
+                    s = s.substring(1).trim();
+                    questions.add(s);
+                    questionList.put(s, new HashMap<String, Boolean>());
+                    for (int i = 0; i < 4; ++i) {
+                        answer = sc.nextLine();
+                        Boolean isCorrect = (answer.charAt(0) == '1');
+                        questionList.get(s).put(answer.substring(1).trim(), isCorrect);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            Logger.i(TAG, "readQuestions", e);
             e.printStackTrace();
         }
     }
@@ -235,26 +294,49 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             inputStream = openFileInput(file);
             s = new Scanner(inputStream, "UTF-8").next();
             inputStream.close();
-            String[]ids = s.split(",");
-            for(String category:ids){
-                if(category.equals(id+""))return true;
-            }return false;
+            String[] ids = s.split(",");
+            for(String category : ids) {
+                if(category.equals(id + ""))
+                    return true;
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
 
-    /**
-     * Skips the remaining timer and starts the BetweenQuestions Task
-     *
-     * @param view  Confirm button
-     */
-    public void onConfirm(View view) {
-        Logger.i(TAG, "onConfirm");
+    /************************************************************************************
+     *  Dialog Related Methods                                                      *
+     ***********************************************************************************/
 
-        Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
+    public void doDialogAlert() {
+        Logger.i(TAG, "doDialogAlert");
+
+        HighscoreDialog newFragment = new HighscoreDialog();
+        newFragment.setCancelable(false);
+        newFragment.show(getFragmentManager(), "highscoreDialog");
     }
+
+    public static int getHighscore() {
+        return highscore;
+    }
+
+    @Override
+    public void Submit() {
+        Logger.i(TAG, "Submit");
+        (new LocalHighscoreActivity()).addHighscore(HighscoreDialog.getName(), highscore);
+        onBackPressed();
+    }
+
+    @Override
+    public void Cancel() {
+        Logger.i(TAG, "Cancel");
+        onBackPressed();
+    }
+
+    /************************************************************************************
+     *  AsyncTask start Methods                                                      *
+     ***********************************************************************************/
 
     /**
      * Starts the AsyncTask that runs while a Question is being answered by the user
@@ -292,8 +374,13 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             Logger.i(TAG, "doInBackground");
             for (int i = 10; i >= 0; --i) {
                 try {
-                    publishProgress(i);
-                    Thread.sleep(1000);
+
+                    if (DQActive) {
+                        publishProgress(i);
+                        Thread.sleep(1000);
+                    } else {
+                        publishProgress(0);
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -306,6 +393,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
          */
         protected void onPreExecute() {
             Logger.i(TAG, "onPreExecute");
+            DQActive = true;
 
             this.countdown = (TextView) findViewById(R.id.game_textView_countdown);
             this.countdown.setText("10");
@@ -327,6 +415,7 @@ public class StartGameActivity extends FullscreenLayoutActivity{
          */
         protected void onPostExecute(Void arg0) {
             Logger.i(TAG, "onPostExecute");
+            DQActive = false;
             startAsyncBackground();
         }
     }
@@ -346,7 +435,6 @@ public class StartGameActivity extends FullscreenLayoutActivity{
          */
         protected Void doInBackground(Void... arg0) {
             Logger.i(TAG, "doInBackground");
-            //for (int i = 30; i >= 0; --i) {
             try {
                 onProgressUpdate(1);
                 Thread.sleep(2000);
@@ -354,8 +442,6 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //}
-
             return null;
         }
 
@@ -365,11 +451,12 @@ public class StartGameActivity extends FullscreenLayoutActivity{
          */
         protected void onPreExecute() {
             Logger.i(TAG, "onPreExecute");
+            BQActive = true;
 
             int wrongAnswers = 0;
 
             for (int i = 0; i < tButtons.size(); ++i) {
-                if (tButtons.get(i).isChecked() != answers.get(tButtons.get(i).getTextOn())) {
+                if (tButtons.get(i).isChecked() != questionList.get(currentQuestion).get(tButtons.get(i).getTextOn())) {
                     wrongAnswers++;
                     tButtons.get(i).setBackgroundResource(R.drawable.red);
                 } else {
@@ -397,11 +484,14 @@ public class StartGameActivity extends FullscreenLayoutActivity{
             Logger.i(TAG, "onPostExecute");
 
             if (!hasLives()) {
-                // TODO BEENDEN --> Speicher Highscore in Liste und zeige Dialog "Verloren"
-                Logger.i(TAG, "Score: " + highscore);
+                BQActive = DQActive = false;
+                doDialogAlert();
+            } else if (!(questions.size() > 0)) {
+                BQActive = DQActive = false;
+                doDialogAlert();
             } else {
+                BQActive = false;
                 startAsyncMain();
-                BQTask.cancel(true);
             };
         }
     }

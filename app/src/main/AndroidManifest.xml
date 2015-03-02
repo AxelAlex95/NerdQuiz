@@ -18,19 +18,25 @@
         </activity>
         <activity
             android:name=".CategoryActivity"
-            android:label="CategoriesActivity"
-            android:parentActivityName=".MainMenuActivity" >
+            android:label="CategoriesActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="matsematics.nerdquiz.MainMenuActivity" />
         </activity>
         <activity
-            android:name=".StartGameActivity"
+            android:name=".GameActivity"
             android:label="StartGameActivity" >
         </activity>
         <activity
             android:name=".HighscoreActivity"
-            android:label="Highscores"
+            android:label="Highscores" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="matsematics.nerdquiz.MainMenuActivity" />
+        </activity>
+        <activity
+            android:name=".LocalHighscoreActivity"
+            android:label="@string/title_activity_local_highscore"
             android:parentActivityName=".MainMenuActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

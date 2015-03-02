@@ -1,0 +1,60 @@
+﻿
+# Was kann Megaman in Megaman?
+1 Springen
+0 Sliden
+0 Fliegen
+1 Schießen
+
+# Welche Farben gibt es in Dr. Mario?
+1 Blau
+0 Grün
+1 Rot
+0 Orange
+
+# Welche Farben gibt es in Micro Machines?
+1 Rot
+1 Grün
+1 Blau
+0 Gelb
+
+# Wie heißen die Protagonisten in Ninja Gaiden?
+1 Ryu Hayabusa
+0 Simon Belmonte
+0 Jaquio
+0 Samus Aran
+
+# Wie viele Soundkanäle hat die NES?
+0 4
+0 8
+0 6
+0 3
+
+# Wie heißen die Feen, die Link begleiten?
+1 Navi
+1 Ciela
+1 Tetl
+0 Tael
+
+# Was gab es vor 1960?
+1 Das erste Mobiltelefon
+0 Die erste Diskette
+1 Das erste Computerspiel
+1 Den ersten Compiler
+
+# Welche Farben haben die PacMan-Geister?
+1 Blau
+0 Grün
+1 Rot
+1 Pink
+
+# Wie viele Reihen passen in ein Tetris-Feld
+1 20
+0 15
+0 18
+0 22
+
+# Woher stammen die Abkürzungen OoA und OoS?
+1 Legend of Zelda
+0 Super Smash Brothers
+0 Mario Party
+0 Diddy Kong Racing

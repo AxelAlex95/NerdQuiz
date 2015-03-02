@@ -1,12 +1,8 @@
 package matsematics.nerdquiz;
 
-import android.util.Log;
-
-import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 /**
  * FileUtils can read and write Strings and Ints into a given Stream
@@ -35,7 +31,10 @@ public class FileUtils {
    * @param int32 int to write
    * @return true, if writing was successful
    */
-  public static boolean writeInt32(OutputStream os, int int32){
+  public static boolean writeInt32(OutputStream os, int int32) {
+    if (os == null)
+      return false;
+
     try {
       for (int i = 3; i >= 0; --i)
         os.write((int32 >>> (8 * i)) & 0xFF);
@@ -79,21 +78,6 @@ public class FileUtils {
   }
 
   /**
-   * readStringArray reads the InputStream completely
-   * and returns the information in an array
-   * @param is InputStream to read from
-   * @return Array with Strings from InputStream
-   */
-  public static String[] readStringArray(InputStream is) {
-    ArrayList<String> list = new ArrayList<>();
-    String str;
-    while ((str = readString(is)) != null)
-      list.add(str);
-
-    return (String[]) list.toArray();
-  }
-
-  /**
    * writeString writes a given String to a given OutputStream;
    * the length (int32) of the String will be placed in front of the String
    * @param os OutputStream to write to
@@ -116,12 +100,49 @@ public class FileUtils {
   }
 
   /**
+   * readStringArray reads the InputStream completely
+   * and returns the information in an array
+   * @param is InputStream to read from
+   * @return Array with Strings from InputStream
+   */
+  public static String[] readStringArray(InputStream is) {
+    if (is == null)
+      return null;
+
+    int size;
+    try {
+      size = readInt32(is);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
+
+    if (size <= 0)
+      return null; // length of array not acceptable
+
+    String[] arr = new String[size];
+
+    for (int i = 0; i < arr.length; ++i) {
+      String str = readString(is);
+
+      if (str == null)
+        return null;
+
+      arr[i] = str;
+    }
+
+    return arr;
+  }
+
+  /**
    * writeStringArray writes a given Array of Strings to a given OutputStream
    * @param os OutputStream to write to
    * @param arr Array of Strings to write
    * @return true, if Array could be completely written into OutputStream
    */
   public static boolean writeStringArray(OutputStream os, String[] arr) {
+    writeInt32(os, arr.length);
+
     for (String str : arr) {
       if (!writeString(os, str))
         return false;
